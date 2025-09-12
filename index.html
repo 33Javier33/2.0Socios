@@ -790,7 +790,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs de los scripts ---
-    const SCRIPT_URL_LOGIN = 'https://script.google.com/macros/s/AKfycbxRUn10RXJJCO8d0nAouZzuYv2znCVb9DXWDVmWEiFNLyXdGP2rSrV_eQqZgO9q7Vij4w/exec';
+    const SCRIPT_URL_LOGIN = 'https://script.google.com/macros/s/AKfycbwRUn10RXJJCO8d0nAouZzuYv2znCVb9DXWDVmWEiFNLyXdGP2rSrV_eQqZgO9q7Vij4w/exec';
     const SCRIPT_URL_NOTAS = 'https://script.google.com/macros/s/AKfycbwhKQTp9kER_H87XLekd3d69u5PK5ZpfpGzKdAtYcfKM0qTUuF5apPvB2UNYSyS2-FR/exec';
     const SCRIPT_URL_RECAUDACION = 'https://script.google.com/macros/s/AKfycbxna9EH5LZPTPCPws58pGro6qCrZ8_zNwvUkUHS28BYfd8CsAcD1MRcqlITbDm4lTk/exec'; 
     
@@ -1049,7 +1049,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // ESTE ES EL NUEVO CÓDIGO DE LOGIN
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button[type="submit"]');
@@ -1128,7 +1127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload(); 
     });
     
-    // ESTE ES EL NUEVO CÓDIGO PARA GUARDAR EL TELÉFONO
     document.getElementById('savePhoneBtn').addEventListener('click', async () => {
         const phoneInput = document.getElementById('phoneInput');
         const phone = phoneInput.value.trim();
@@ -1140,17 +1138,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (pendingLoginUser) {
             pendingLoginUser.telefono = phone;
 
-            // Si el usuario ya tiene un id de la base de datos (hizo login), no necesita registrarse.
-            // Si no tiene id, es un usuario nuevo y hay que registrarlo.
             if (getAppData().usuarios[pendingLoginUser.id]) {
-                 // Usuario existente que solo actualiza el teléfono
                 const appData = getAppData();
                 appData.usuarios[pendingLoginUser.id].telefono = phone;
                 saveAppData(appData);
-                // Aquí podrías enviar una actualización a Sheets si quisieras
                 completeLogin(pendingLoginUser);
             } else {
-                // Es un usuario nuevo, ahora lo registramos en Sheets
                 try {
                     const registerResponse = await fetch(SCRIPT_URL_LOGIN, {
                         method: 'POST',
@@ -1252,7 +1245,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('changePasswordModal').style.display = 'none';
     });
 
-    // --- Lógica para editar puntos ---
     document.getElementById('editPuntosBtn').addEventListener('click', () => {
         const editPuntosModal = document.getElementById('editPuntosModal');
         document.getElementById('editPuntosInput').value = loggedInUser.puntos;
@@ -1285,7 +1277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Cantidad de puntos actualizada correctamente.');
     });
     
-    // --- Lógica de Respaldo y Recuperación ---
     document.getElementById('exportDataBtn')?.addEventListener('click', () => {
         try {
             const appData = localStorage.getItem('appData');
@@ -1370,7 +1361,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     });
 
-    // --- Lógica de la aplicación (Montos, Cálculos, etc.) ---
     async function importarDesdeSheets(isSilent = false) {
         if (!loggedInUser) return;
         const btn = document.getElementById('importarDesdeSheetsBtn');
@@ -1961,3 +1951,4 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
