@@ -790,7 +790,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- URLs de los scripts ---
-    const SCRIPT_URL_LOGIN = 'https://script.google.com/macros/s/AKfycbwRUn10RXJJCO8d0nAouZzuYv2znCVb9DXWDVmWEiFNLyXdGP2rSrV_eQqZgO9q7Vij4w/exec';
+    const SCRIPT_URL_LOGIN = 'https://script.google.com/macros/s/AKfycbx7ido_i7vB9qaxWD2tNJA74iGEUuD9vBEa1r_DwUdnnF6i4E0CfS_J52-TYmL6qeVE/exec';
     const SCRIPT_URL_NOTAS = 'https://script.google.com/macros/s/AKfycbwhKQTp9kER_H87XLekd3d69u5PK5ZpfpGzKdAtYcfKM0qTUuF5apPvB2UNYSyS2-FR/exec';
     const SCRIPT_URL_RECAUDACION = 'https://script.google.com/macros/s/AKfycbxna9EH5LZPTPCPws58pGro6qCrZ8_zNwvUkUHS28BYfd8CsAcD1MRcqlITbDm4lTk/exec'; 
     
@@ -1049,6 +1049,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+    // CÓDIGO DE LOGIN MODIFICADO PARA USAR GET Y EVITAR CORS
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = e.target.querySelector('button[type="submit"]');
@@ -1069,16 +1070,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const userId = `${nombre.toLowerCase()}-${apellido.toLowerCase()}`;
 
         try {
-            // --- 1. Intentar hacer login ---
-            const checkResponse = await fetch(SCRIPT_URL_LOGIN, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'checkUser', userId: userId, password: password })
-            });
+            const url = new URL(SCRIPT_URL_LOGIN);
+            url.searchParams.append('action', 'checkUser');
+            url.searchParams.append('userId', userId);
+            url.searchParams.append('password', password);
+            
+            const checkResponse = await fetch(url);
             const result = await checkResponse.json();
 
             if (result.status === 'success') {
-                // Usuario encontrado y contraseña correcta
                 pendingLoginUser = result.user;
                 if (!pendingLoginUser.telefono) {
                     document.getElementById('phoneModal').style.display = 'flex';
@@ -1086,7 +1086,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     completeLogin(pendingLoginUser);
                 }
             } else if (result.status === 'not_found') {
-                // --- 2. Si no se encuentra, intentar registrar ---
                 const newUser = {
                     id: userId, nombre: nombre, apellido: apellido,
                     tipo: document.getElementById('loginTipoContrato').value,
@@ -1104,10 +1103,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 pendingLoginUser = newUser;
-                document.getElementById('phoneModal').style.display = 'flex'; // Pide el teléfono antes de registrar
+                document.getElementById('phoneModal').style.display = 'flex';
 
             } else {
-                // Otro tipo de error (ej. contraseña incorrecta)
                 showToast(result.message, 'error');
             }
 
@@ -1127,6 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         location.reload(); 
     });
     
+    // CÓDIGO DE GUARDAR TELÉFONO MODIFICADO PARA USAR GET
     document.getElementById('savePhoneBtn').addEventListener('click', async () => {
         const phoneInput = document.getElementById('phoneInput');
         const phone = phoneInput.value.trim();
@@ -1145,11 +1144,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 completeLogin(pendingLoginUser);
             } else {
                 try {
-                    const registerResponse = await fetch(SCRIPT_URL_LOGIN, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'registerUser', user: pendingLoginUser })
-                    });
+                    const url = new URL(SCRIPT_URL_LOGIN);
+                    url.searchParams.append('action', 'registerUser');
+                    url.searchParams.append('user', JSON.stringify(pendingLoginUser));
+
+                    const registerResponse = await fetch(url);
                     const result = await registerResponse.json();
                     
                     if (result.status === 'success') {
@@ -1951,4 +1950,5 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
