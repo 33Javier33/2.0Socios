@@ -1,107 +1,16 @@
+<!-- CÓDIGO FINAL CORREGIDO CON CONEXIONES, LÓGICA PART-TIME Y CÁLCULO DE PUNTO-PLANTA CORRECTO -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Propina (Versión Final y Estable)</title>
+    <title>Gestión de Propina (Cálculo por Divisor Corregido)</title>
+    <!-- Librerías para el calendario -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-        :root {
-            --menu-width: 250px;
-            --primary-color: #3498db;
-            --primary-hover-color: #2980b9;
-            --secondary-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --light-bg: #eef2f6;
-            --white-bg: #ffffff;
-            --text-dark: #2c3e50;
-            --text-light: #555;
-            --border-color: #e0e6ed;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            background-color: var(--light-bg);
-            color: #333;
-        }
-        
-        .menu-toggle {
-            position: fixed; top: 15px; left: 15px; z-index: 1002; width: 40px; height: 40px;
-            background-color: var(--primary-color); border: none; border-radius: 8px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: left 0.3s ease;
-        }
-        .menu-toggle span { display: block; width: 22px; height: 2px; background-color: white; margin: 2px 0; transition: all 0.3s ease; }
-        .side-menu.open + .main-container .menu-toggle { left: calc(var(--menu-width) + 15px); }
-        .menu-toggle.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        .side-menu {
-            position: fixed; top: 0; left: 0; width: var(--menu-width); height: 100%;
-            background-color: var(--text-dark); z-index: 1001; transform: translateX(-100%);
-            transition: transform 0.3s ease; display: flex; flex-direction: column;
-            padding-top: 60px; box-shadow: 5px 0 15px rgba(0,0,0,0.1);
-        }
-        .side-menu.open { transform: translateX(0); }
-        .side-menu .menu-header { color: white; font-size: 1.5em; font-weight: 700; text-align: center; padding: 20px 10px; border-bottom: 1px solid #4a627a; }
-        .side-menu a { color: white; text-decoration: none; padding: 15px 20px; display: block; font-size: 1.0em; transition: background-color 0.2s ease, padding-left 0.2s ease; border-bottom: 1px solid #3e5268; }
-        .side-menu a:hover, .side-menu a.active-link { background-color: var(--primary-color); padding-left: 25px; }
-        .main-container { transition: margin-left 0.3s ease; padding: 15px; }
-        .container { max-width: 960px; margin: 10px auto; background-color: var(--white-bg); padding: 20px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07); }
-        h1 { color: var(--text-dark); text-align: center; margin-bottom: 20px; font-weight: 700; font-size: 1.8em; padding-top: 45px; }
-        h2 { color: var(--primary-color); margin: 0 0 20px 0; font-weight: 600; font-size: 1.5em; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        #sync-indicator { font-size: 0.6em; font-weight: 400; color: var(--text-light); opacity: 0; transition: opacity 0.3s; }
-        #sync-indicator.visible { opacity: 1; }
-        h3 { color: var(--primary-color); margin-top: 25px; margin-bottom: 10px; font-size: 1.4em; }
-        .content-panel { display: none; }
-        .content-panel.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        label { display: block; margin-bottom: 7px; font-weight: 600; color: var(--text-light); }
-        input[type="text"], input[type="date"], input[type="number"], select { width: 100%; padding: 10px; margin-bottom: 18px; border: 1px solid #dcdcdc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
-        input:focus, select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); }
-        button { background-color: var(--secondary-color); color: white; padding: 10px 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 1em; font-weight: 600; width: 100%; transition: background-color 0.3s ease, transform 0.2s ease; margin-top: 8px; }
-        button:hover { background-color: #27ae60; transform: translateY(-1px); }
-        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        button.cancel-btn { background-color: #95a5a6; }
-        
-        .socios-list-container { margin-top: 30px; border-top: 2px solid var(--border-color); }
-        .socio-card { display: flex; align-items: center; justify-content: space-between; padding: 15px; background-color: #f7f9fc; border-radius: 8px; margin-bottom: 10px; border: 1px solid #dbe9f5;}
-        .socio-card-info p { margin: 0; color: var(--text-light); }
-        .socio-card-info p strong { color: var(--text-dark); }
-        .socio-card-actions button { width: auto; font-size: 0.9em; padding: 8px 12px; margin: 0 5px; }
-        .socio-card-actions .edit-btn { background-color: var(--primary-color); }
-        .socio-card-actions .delete-btn { background-color: var(--danger-color); }
-
-        .distribucion-planta-container, .distribucion-part-time-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); }
-        .socio-distribucion-card { background-color: #f7f9fc; border: 1px solid #dbe9f5; border-radius: 10px; padding: 18px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); }
-        
-        .general-total { background-color: var(--secondary-color); color: white; padding: 12px 15px; border-radius: 8px; margin-bottom: 15px; text-align: center; font-size: 1.3em; font-weight: 700; }
-        .action-button-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .show-punto-planta-btn { background-color: #9b59b6; }
-        #addAnticipoBtn { background-color: var(--primary-color); }
-        .modal { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; animation: fadeInModal 0.3s; }
-        @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { background-color: #fefefe; padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; text-align: center; }
-        .modal-content h3, .modal-content p, .modal-content label { text-align: left; }
-        .modal-content .modal-actions { display: flex; justify-content: space-around; margin-top: 20px; }
-        .modal-content .modal-actions button { width: 45%; }
-        .close-button { position: absolute; top: 10px; right: 15px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
-        #balanceReport { padding: 15px; border-radius: 8px; background-color: #ecf0f1; }
-        #balanceReport p { margin: 0; padding: 8px 0; display: flex; justify-content: space-between; }
-        #balanceReport .balance-saldo.negative { color: var(--danger-color); }
-        .anticipo-socio-info { background-color: #e6f7ff; border: 1px solid #91d5ff; border-radius: 8px; padding: 15px; margin: 20px 0; }
-        .anticipo-socio-info .saldo-disponible.negative span { color: var(--danger-color); }
-
-        #toast-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-        .toast { background-color: var(--text-dark); color: white; padding: 12px 20px; border-radius: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); font-size: 0.9em; font-weight: 500; opacity: 0; transform: translateY(20px); transition: opacity 0.3s ease, transform 0.3s ease; }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background-color: var(--secondary-color); }
-        .toast.danger { background-color: var(--danger-color); }
-        
-        @media (min-width: 992px) { .menu-toggle { display: none; } .side-menu { transform: translateX(0); } .main-container { margin-left: var(--menu-width); } .container h1 { padding-top: 0; } }
+        :root{--menu-width:250px;--primary-color:#3498db;--primary-hover-color:#2980b9;--secondary-color:#2ecc71;--danger-color:#e74c3c;--warning-color:#f39c12;--light-bg:#eef2f6;--white-bg:#fff;--text-dark:#2c3e50;--text-light:#555;--border-color:#e0e6ed}body{font-family:'Poppins',sans-serif;margin:0;background-color:var(--light-bg);color:#333}.menu-toggle{position:fixed;top:15px;left:15px;z-index:1002;width:40px;height:40px;background-color:var(--primary-color);border:none;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:left .3s ease}.menu-toggle span{display:block;width:22px;height:2px;background-color:#fff;margin:2px 0;transition:all .3s ease}.side-menu.open+.main-container .menu-toggle{left:calc(var(--menu-width) + 15px)}.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}.menu-toggle.active span:nth-child(2){opacity:0}.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}.side-menu{position:fixed;top:0;left:0;width:var(--menu-width);height:100%;background-color:var(--text-dark);z-index:1001;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;padding-top:60px;box-shadow:5px 0 15px rgba(0,0,0,.1)}.side-menu.open{transform:translateX(0)}.side-menu .menu-header{color:#fff;font-size:1.5em;font-weight:700;text-align:center;padding:20px 10px;border-bottom:1px solid #4a627a}.side-menu a{color:#fff;text-decoration:none;padding:15px 20px;display:block;font-size:1em;transition:background-color .2s ease,padding-left .2s ease;border-bottom:1px solid #3e5268}.side-menu a:hover,.side-menu a.active-link{background-color:var(--primary-color);padding-left:25px}.main-container{transition:margin-left .3s ease;padding:15px}.container{max-width:960px;margin:10px auto;background-color:var(--white-bg);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,.07)}h1{color:var(--text-dark);text-align:center;margin-bottom:20px;font-weight:700;font-size:1.8em;padding-top:45px}h2{color:var(--primary-color);margin:0 0 20px;font-weight:600;font-size:1.5em;border-bottom:2px solid var(--border-color);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center}#sync-indicator{font-size:.6em;font-weight:400;color:var(--text-light);opacity:0;transition:opacity .3s}#sync-indicator.visible{opacity:1}h3{color:var(--primary-color);margin-top:25px;margin-bottom:10px;font-size:1.4em}.content-panel{display:none}.content-panel.active{display:block;animation:fadeIn .5s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}label{display:block;margin-bottom:7px;font-weight:600;color:var(--text-light)}input[type=text],input[type=date],input[type=number],select{width:100%;padding:10px;margin-bottom:18px;border:1px solid #dcdcdc;border-radius:6px;box-sizing:border-box;font-size:1em}input:focus,select:focus{border-color:var(--primary-color);outline:0;box-shadow:0 0 0 3px rgba(52,152,219,.2)}button{background-color:var(--secondary-color);color:#fff;padding:10px 15px;border:none;border-radius:6px;cursor:pointer;font-size:1em;font-weight:600;width:100%;transition:background-color .3s ease,transform .2s ease;margin-top:8px}button:hover{background-color:#27ae60;transform:translateY(-1px)}button:disabled{background-color:#bdc3c7;cursor:not-allowed}button.cancel-btn{background-color:#95a5a6}.socios-list-container{margin-top:30px;border-top:2px solid var(--border-color)}.socio-card{padding:15px;background-color:#f7f9fc;border-radius:8px;margin-bottom:10px;border:1px solid #dbe9f5}.socio-card-info p{margin:4px 0;color:var(--text-light)}.socio-card-info p strong{color:var(--text-dark)}.socio-card-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:15px;border-top:1px solid #e0e6ed;padding-top:10px}.socio-card-actions button{width:auto;font-size:.9em;padding:6px 10px}.socio-card-actions .edit-btn{background-color:var(--primary-color)}.socio-card-actions .delete-btn{background-color:var(--danger-color)}.distribucion-planta-container,.distribucion-part-time-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:15px;padding-top:15px;border-top:1px solid var(--border-color)}.socio-distribucion-card{background-color:#f7f9fc;border:1px solid #dbe9f5;border-radius:10px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06)}.anticipos-list-container{margin-top:15px;padding-top:10px;border-top:1px dashed var(--border-color)}.anticipos-list-container h4{margin:0 0 10px;font-size:1em;color:var(--text-dark)}.anticipo-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:.9em;border-bottom:1px solid #eef2f6}.anticipo-item:last-child{border-bottom:none}.anticipo-item-info{display:flex;flex-direction:column}.anticipo-item-info span{color:var(--text-light)}.anticipo-item-info .monto{font-weight:600;color:var(--text-dark)}.anticipo-item-actions button{font-size:.8em;padding:4px 8px;margin:0 0 0 5px;width:auto}.anticipo-item-actions .edit-anticipo-btn{background-color:var(--warning-color)}.anticipo-item-actions .delete-anticipo-btn{background-color:var(--danger-color)}.general-total{background-color:var(--secondary-color);color:#fff;padding:12px 15px;border-radius:8px;margin-bottom:15px;text-align:center;font-size:1.3em;font-weight:700}.action-button-group{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.show-punto-planta-btn{background-color:#9b59b6}#addAnticipoBtn{background-color:var(--primary-color)}.modal{display:none;position:fixed;z-index:1001;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);justify-content:center;align-items:center;animation:fadeInModal .3s}@keyframes fadeInModal{from{opacity:0}to{opacity:1}}.modal-content{background-color:#fefefe;padding:25px;border-radius:10px;width:90%;max-width:450px;text-align:center}.modal-content h3,.modal-content p,.modal-content label{text-align:left}.modal-content .modal-actions{display:flex;justify-content:space-around;margin-top:20px}.modal-content .modal-actions button{width:45%}.close-button{position:absolute;top:10px;right:15px;color:#aaa;font-size:28px;font-weight:700;cursor:pointer}#balanceReport{padding:15px;border-radius:8px;background-color:#ecf0f1}#balanceReport p{margin:0;padding:8px 0;display:flex;justify-content:space-between}#balanceReport .balance-saldo.negative{color:var(--danger-color)}.anticipo-socio-info{background-color:#e6f7ff;border:1px solid #91d5ff;border-radius:8px;padding:15px;margin:20px 0}.anticipo-socio-info .saldo-disponible.negative span{color:var(--danger-color)}#toast-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;align-items:center;gap:10px}.toast{background-color:var(--text-dark);color:#fff;padding:12px 20px;border-radius:25px;box-shadow:0 4px 15px rgba(0,0,0,.1);font-size:.9em;font-weight:500;opacity:0;transform:translateY(20px);transition:opacity .3s ease,transform .3s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background-color:var(--secondary-color)}.toast.danger{background-color:var(--danger-color)}.part-time-actions{display:flex;flex-direction:column;gap:8px;margin-top:10px;border-top:1px solid var(--border-color);padding-top:10px}.part-time-actions button{width:100%;padding:8px;font-size:.85em}.part-time-actions .calendar-btn{background-color:#f39c12}.part-time-actions .calculate-btn{background-color:#1abc9c}.distribucion-part-time-container .puntos-calculados-pt{font-weight:700;color:#16a085}@media (min-width:992px){.menu-toggle{display:none}.side-menu{transform:translateX(0)}.main-container{margin-left:var(--menu-width)}.container h1{padding-top:0}}
     </style>
 </head>
 <body>
@@ -118,7 +27,7 @@
             <div id="balanceContent" class="content-panel active">
                 <h2><span>Balance General</span><span id="sync-indicator"></span></h2>
                 <div id="balanceReport">
-                    <p><strong>Total Propina Bruta:</strong> <a href="#" id="propinaBrutaLink"><span id="balancePropinaBruta">$0</span></a></p>
+                    <p><strong>Total Propina Bruta:</strong> <a href="#" id="propinaBrutaLink" target="_blank"><span id="balancePropinaBruta">$0</span></a></p>
                     <p><strong>Total Anticipos:</strong> <span id="balanceAnticipos">$0</span></p><hr>
                     <p><strong>Saldo Disponible:</strong> <span id="balanceSaldo" class="balance-saldo">$0</span></p>
                 </div>
@@ -147,7 +56,6 @@
     <div id="modal-container"></div>
     <div id="toast-container"></div>
     
-    <!-- TEMPLATES -->
     <template id="templateRegistroSocioForm">
         <label for="nombre">Nombre:</label><input type="text" id="nombre" required>
         <label for="apellido">Apellido:</label><input type="text" id="apellido" required>
@@ -185,16 +93,15 @@
                 <span class="close-button">&times;</span><h3>Cálculo de Punto-Planta</h3>
                 <div>
                     <p><strong>Total Propina Bruta:</strong> <span id="propinaBrutaModal">$0</span></p>
-                    <p><strong>Total Anticipos:</strong> <span id="retirosModal">$0</span></p>
-                    <p><strong>Total Propina Neta:</strong> <span id="propinaNetaModal">$0</span></p>
-                    <p><strong>Total Puntos (Planta):</strong> <span id="totalPuntosSociosModal">0</span></p><hr>
-                    <label for="divisorPuntoPlanta">Divisor:</label><input type="text" id="divisorPuntoPlanta" inputmode="numeric" required>
+                    <hr>
+                    <label for="divisorPuntoPlanta">Ingresar Divisor:</label>
+                    <input type="text" id="divisorPuntoPlanta" inputmode="numeric" placeholder="Ej: 100000" required>
                     <button type="button" id="calcularPuntoPlantaInternoBtn">Calcular y Guardar</button>
                     <div id="puntoPlantaValor" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
                 </div>
             </div>
     </template>
-
+    
     <template id="templateEditSocioModal">
         <div class="modal">
             <div class="modal-content">
@@ -212,6 +119,21 @@
         </div>
     </template>
     
+    <template id="templateEditAnticipoModal">
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span><h3>Editar Anticipo</h3>
+                <form id="editAnticipoForm">
+                    <input type="hidden" id="editSocioId">
+                    <input type="hidden" id="editAnticipoIndex">
+                    <label for="editAnticipoFecha">Fecha:</label><input type="date" id="editAnticipoFecha" required>
+                    <label for="editAnticipoCantidad">Monto:</label><input type="text" id="editAnticipoCantidad" inputmode="numeric" required>
+                    <button type="submit">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </template>
+
     <template id="templateConfirmDeleteModal">
         <div class="modal">
             <div class="modal-content">
@@ -224,14 +146,40 @@
             </div>
         </div>
     </template>
+    
+    <template id="templateCalendarModal">
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span><h3 id="calendarModalTitle">Días Trabajados</h3>
+                <input type="text" id="flatpickrInput" placeholder="Selecciona días...">
+                <p style="text-align:center; margin-top:15px;">Días seleccionados: <strong id="selectedDaysCount">0</strong></p>
+                <button id="saveCalendarBtn">Guardar Días</button>
+            </div>
+        </div>
+    </template>
+    
+    <template id="templatePartTimePointsModal">
+        <div class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span><h3 id="partTimePointsModalTitle">Calcular Puntos Part-Time</h3>
+                <p><strong>Puntos de Antigüedad Base:</strong> <span id="partTimeModalBasePoints">0</span></p>
+                <p><strong>Monto Propina Asignable (de sus días):</strong> <span id="partTimeModalAssignableAmount">$0</span></p><hr>
+                <label for="partTimeMultiplicador">Multiplicador de Puntos:</label>
+                <input type="text" id="partTimeMultiplicador" inputmode="numeric" required>
+                <button type="button" id="calculatePartTimePointsInternoBtn">Calcular y Guardar Puntos</button>
+                <div id="partTimePointsValue" style="text-align:center; margin-top:15px; font-weight:bold;"></div>
+            </div>
+        </div>
+    </template>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const SCRIPT_URL_MONTOS = 'https://script.google.com/macros/s/AKfycbxna9EH5LZPTPCPws58pGro6qCrZ8_zNwvUkUHS28BYfd8CsAcD1MRcqlITbDm4lTk/exec';
-            const SCRIPT_URL_SOCIOS = 'https://script.google.com/macros/s/AKfycbwoc3UKlGSTZ1AtNvo1BLq2lYNr0NYsMu30iy-AH4E_5V470FewJ9AuvPz47bMiyG2DaA/exec'; 
+            const SCRIPT_URL_SOCIOS = 'https://script.google.com/macros/s/AKfycbwoc3UKlGSTZ1AtNvo1BLq2lYNr0NYsMu30iy-AH4E_5V470FewJ9AuvPz47bMiyG2DaA/exec';
             
             document.getElementById('registroSocioForm').innerHTML = document.getElementById('templateRegistroSocioForm').innerHTML;
-            document.getElementById('propinaBrutaLink').href = SCRIPT_URL_MONTOS;
             
             const ui = {
                 menuToggle: document.getElementById('menuToggle'),
@@ -252,22 +200,29 @@
             };
 
             let isSyncing = false;
+            let sociosData = [];
+            let montosData = [];
+            let flatpickrInstance = null;
 
             const showToast = (message, type = 'success') => {
                 const toast = document.createElement('div');
-                toast.className = `toast ${type}`; toast.textContent = message;
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
                 ui.toastContainer.appendChild(toast);
                 setTimeout(() => toast.classList.add('show'), 10);
-                setTimeout(() => { toast.classList.remove('show'); toast.addEventListener('transitionend', () => toast.remove()); }, 4000);
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    toast.addEventListener('transitionend', () => toast.remove());
+                }, 4000);
             };
 
             const formatNumber = (num) => new Intl.NumberFormat('es-CL').format(Math.round(num) || 0);
             const parseNumber = (str) => parseFloat(String(str).replace(/\./g, '').replace(',', '.')) || 0;
-            const getSociosFromStorage = () => JSON.parse(localStorage.getItem('socios_data')) || [];
-            const saveSociosToStorage = (socios) => localStorage.setItem('socios_data', JSON.stringify(socios));
-            const getMontos = () => JSON.parse(localStorage.getItem('montos')) || [];
-            const saveMontos = (montos) => localStorage.setItem('montos', JSON.stringify(montos));
-            
+            const getAnticiposFromStorage = () => JSON.parse(localStorage.getItem('anticipos_data_v3')) || {};
+            const saveAnticiposToStorage = (anticipos) => localStorage.setItem('anticipos_data_v3', JSON.stringify(anticipos));
+            const getPartTimeDataFromStorage = () => JSON.parse(localStorage.getItem('part_time_data_v3')) || {};
+            const savePartTimeDataToStorage = (data) => localStorage.setItem('part_time_data_v3', JSON.stringify(data));
+
             function setupNumericInputFormatting(inputElement) {
                 if (!inputElement) return;
                 inputElement.addEventListener('input', (e) => {
@@ -280,139 +235,317 @@
                 });
             }
 
-            const calcularPuntosPropinaBase = (fechaIngresoStr, area, tipoContrato) => {
-                if (!fechaIngresoStr) return { puntosConTope: 4, puntosSinTope: 4 };
-                const fechaIngreso = new Date(fechaIngresoStr + 'T00:00:00Z');
-                if (isNaN(fechaIngreso)) return { puntosConTope: 4, puntosSinTope: 4 };
+            const calcularPuntosAntiguedad = (fechaIngresoStr) => {
+                if (!fechaIngresoStr) return 4;
+                const fechaIngreso = new Date(fechaIngresoStr);
+                if (isNaN(fechaIngreso)) return 4;
                 const hoy = new Date();
                 let anos = hoy.getFullYear() - fechaIngreso.getFullYear();
                 const m = hoy.getMonth() - fechaIngreso.getMonth();
-                if (m < 0 || (m === 0 && hoy.getDate() < fechaIngreso.getDate())) anos--;
-                const puntosCalculados = 4 + (Math.max(0, anos) * 2);
-                if (tipoContrato === 'Planta') {
-                    const topePuntos = area === 'Mesas' ? 20 : 12;
-                    return { puntosConTope: Math.min(puntosCalculados, topePuntos) };
+                if (m < 0 || (m === 0 && hoy.getDate() < fechaIngreso.getDate())) {
+                    anos--;
                 }
-                return { puntosSinTope: puntosCalculados };
+                return 4 + (Math.max(0, anos) * 2);
             };
+            
+            const isPartTime = (socio) => (socio.TipoContrato || '').toLowerCase().trim() === 'part-time';
+
+            const recalcularMontoAsignableParaSocio = (socio) => {
+                if (!isPartTime(socio)) return;
+                const allPtData = getPartTimeDataFromStorage();
+                const ptData = allPtData[socio.ID] || {};
+                const diasTrabajados = ptData.diasTrabajados || [];
+                let montoAsignable = 0;
+                diasTrabajados.forEach(dia => {
+                    montosData.forEach(monto => {
+                        if (monto.fecha === dia) {
+                            montoAsignable += parseFloat(monto.monto || monto.cantidad || 0);
+                        }
+                    });
+                });
+                allPtData[socio.ID] = { ...ptData, montoAsignable };
+                savePartTimeDataToStorage(allPtData);
+            }
 
             const updateAllUI = () => {
-                const totalPropinaBruta = getMontos().reduce((sum, monto) => sum + monto.cantidad, 0);
-                const socios = getSociosFromStorage(); 
-                const totalAnticipos = socios.reduce((sum, s) => sum + (s.anticipos || []).reduce((sub, a) => sub + a.cantidad, 0), 0);
-                const saldoDisponible = totalPropinaBruta - totalAnticipos;
+                const totalPropinaBruta = montosData.reduce((sum, monto) => sum + parseFloat(monto.monto || monto.cantidad || 0), 0);
+                const anticiposPorSocio = getAnticiposFromStorage();
+                let totalAnticiposGeneral = 0;
+                Object.values(anticiposPorSocio).forEach(lista => {
+                    totalAnticiposGeneral += lista.reduce((sum, a) => sum + a.cantidad, 0);
+                });
+
+                const saldoDisponible = totalPropinaBruta - totalAnticiposGeneral;
                 ui.balancePropinaBruta.textContent = `$${formatNumber(totalPropinaBruta)}`;
-                ui.balanceAnticipos.textContent = `$${formatNumber(totalAnticipos)}`;
+                ui.balanceAnticipos.textContent = `$${formatNumber(totalAnticiposGeneral)}`;
                 ui.balanceSaldo.textContent = `$${formatNumber(saldoDisponible)}`;
                 ui.balanceSaldo.classList.toggle('negative', saldoDisponible < 0);
                 ui.totalGeneralPropinaBrutaDistribucion.textContent = `Total General de Propina (Bruta): $${formatNumber(totalPropinaBruta)}`;
-                renderSocios(socios);
+                
+                const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
+                if (puntoPlanta > 0) {
+                    ui.puntoPlantaDisplay.innerHTML = `<p style="text-align:center; font-weight:bold; background-color:#f0f9ff; padding:10px; border-radius:8px;">Valor Punto-Planta actual: $${formatNumber(puntoPlanta)}</p>`;
+                } else {
+                    ui.puntoPlantaDisplay.innerHTML = '';
+                }
+                renderSocios(sociosData);
             };
-            
+
             const renderSocios = (socios) => {
                 ui.distribucionPlantaContainer.innerHTML = '<h3>Socios Planta</h3>';
                 ui.distribucionPartTimeContainer.innerHTML = '<h3>Socios Part-Time</h3>';
                 ui.sociosListContainer.innerHTML = '';
-                
-                socios.forEach((socio, index) => {
-                    const distCard = createSocioDistribucionCard(socio);
-                    (socio.tipoContrato === 'Planta' ? ui.distribucionPlantaContainer : ui.distribucionPartTimeContainer).appendChild(distCard);
+
+                socios.forEach((socio) => {
                     const manageCard = createSocioManageCard(socio);
                     ui.sociosListContainer.appendChild(manageCard);
+                    const distCard = createSocioDistribucionCard(socio);
+                    if (isPartTime(socio)) {
+                        ui.distribucionPartTimeContainer.appendChild(distCard);
+                    } else {
+                        ui.distribucionPlantaContainer.appendChild(distCard);
+                    }
                 });
-                updatePropinaAsignadaUI(socios);
-            };
-
-            const createSocioDistribucionCard = (socio) => {
-                const card = document.createElement('div'); card.className = 'socio-distribucion-card';
-                card.innerHTML = `<h3>${socio.nombre} ${socio.apellido}</h3><p><strong>Puntos:</strong> <span>${socio.puntosPropina || 0}</span></p><p><strong>Propina Asignada:</strong> <span class="propina-asignada">$0</span></p><p class="total-anticipos"><strong>Anticipado:</strong> <span>$0</span></p><p class="saldo-disponible"><strong>Saldo Disponible:</strong> <span>$0</span></p>`;
-                return card;
+                updatePropinaAsignadaUI();
             };
 
             const createSocioManageCard = (socio) => {
-                const card = document.createElement('div'); card.className = 'socio-card';
-                card.innerHTML = `<div class="socio-card-info"><p><strong>${socio.nombre} ${socio.apellido}</strong></p><p>${socio.area} - ${socio.tipoContrato}</p></div><div class="socio-card-actions"><button class="edit-btn" data-socio-id="${socio.id}">✏️ Editar</button><button class="delete-btn" data-socio-id="${socio.id}">🗑️ Borrar</button></div>`;
+                const card = document.createElement('div');
+                card.className = 'socio-card';
+                let ptInfo = '';
+                if (isPartTime(socio)) {
+                    const ptData = getPartTimeDataFromStorage()[socio.ID] || {};
+                    const diasTrabajados = ptData.diasTrabajados || [];
+                    const montoAsignable = ptData.montoAsignable || 0;
+                    ptInfo = `<p><strong>Días Trabajados:</strong> ${diasTrabajados.length}</p>
+                              <p><strong>Monto Asignable:</strong> $${formatNumber(montoAsignable)}</p>
+                              <div class="part-time-actions">
+                                  <button class="calendar-btn" data-socio-id="${socio.ID}">Registrar Días</button>
+                                  <button class="calculate-btn" data-socio-id="${socio.ID}">Calcular Puntos PT</button>
+                              </div>`;
+                }
+                card.innerHTML = `<div class="socio-card-info">
+                                    <p><strong>${socio.Nombre} ${socio.Apellido}</strong></p>
+                                    <p>${socio.Area} - ${socio.TipoContrato}</p>
+                                    ${ptInfo}
+                                 </div>
+                                 <div class="socio-card-actions">
+                                     <button class="edit-btn" data-socio-id="${socio.ID}">✏️</button>
+                                     <button class="delete-btn" data-socio-id="${socio.ID}">🗑️</button>
+                                 </div>`;
                 return card;
             };
 
-            const updatePropinaAsignadaUI = (socios) => {
-                const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
-                document.querySelectorAll('.socio-distribucion-card').forEach((card, index) => {
-                    const socio = socios[index]; if(!socio) return;
-                    const propinaAsignada = (socio.tipoContrato === 'Planta') ? (socio.puntosPropina || 0) * puntoPlanta : 0;
-                    socio.propinaAsignada = propinaAsignada;
-                    const totalAnticiposSocio = (socio.anticipos || []).reduce((sum, ant) => sum + ant.cantidad, 0);
-                    card.querySelector('.propina-asignada').textContent = `$${formatNumber(propinaAsignada)}`;
-                    card.querySelector('.total-anticipos span').textContent = `$${formatNumber(totalAnticiposSocio)}`;
-                    const saldoEl = card.querySelector('.saldo-disponible span');
-                    saldoEl.textContent = `$${formatNumber(propinaAsignada - totalAnticiposSocio)}`;
-                    saldoEl.parentElement.classList.toggle('negative', (propinaAsignada - totalAnticiposSocio) < 0);
-                });
-                saveSociosToStorage(socios);
+            const createSocioDistribucionCard = (socio) => {
+                const card = document.createElement('div');
+                card.className = 'socio-distribucion-card';
+                card.dataset.socioId = socio.ID;
+                const anticiposSocio = getAnticiposFromStorage()[socio.ID] || [];
+
+                let anticiposHtml = '';
+                if (anticiposSocio.length > 0) {
+                    anticiposHtml = `<div class="anticipos-list-container"><h4>Anticipos</h4>
+                        ${anticiposSocio.map((a, index) => `
+                            <div class="anticipo-item">
+                                <div class="anticipo-item-info">
+                                    <span class="monto">$${formatNumber(a.cantidad)}</span>
+                                    <span>${a.fecha}</span>
+                                </div>
+                                <div class="anticipo-item-actions">
+                                    <button class="edit-anticipo-btn" data-socio-id="${socio.ID}" data-anticipo-index="${index}">✏️</button>
+                                    <button class="delete-anticipo-btn" data-socio-id="${socio.ID}" data-anticipo-index="${index}">🗑️</button>
+                                </div>
+                            </div>`).join('')}
+                    </div>`;
+                }
+                
+                let puntosDisplayHtml = '';
+                if (isPartTime(socio)) {
+                    const ptData = getPartTimeDataFromStorage()[socio.ID] || {};
+                    const puntosCalculados = ptData.puntosCalculados || 0;
+                    puntosDisplayHtml = `<p><strong>Puntos Antigüedad:</strong> <span>${socio.puntosAntiguedad}</span></p>
+                                          <p class="puntos-calculados-pt"><strong>Puntos Calculados PT:</strong> ${puntosCalculados.toFixed(2)}</p>`;
+                } else { // Planta
+                    const topePuntos = socio.Area === 'Mesas' ? 20 : 12;
+                    const puntosFinales = Math.min(socio.puntosAntiguedad, topePuntos);
+                    puntosDisplayHtml = `<p><strong>Puntos (con tope):</strong> <span>${puntosFinales}</span></p>`;
+                }
+                card.innerHTML = `<h3>${socio.Nombre} ${socio.Apellido}</h3>
+                                  ${puntosDisplayHtml}
+                                  <p><strong>Propina Asignada:</strong> <span class="propina-asignada">$0</span></p>
+                                  <p><strong>Anticipado:</strong> <span class="total-anticipos">$0</span></p>
+                                  <p><strong>Saldo Disponible:</strong> <span class="saldo-disponible">$0</span></p>
+                                  ${anticiposHtml}`;
+                return card;
             };
+
+            const updatePropinaAsignadaUI = () => {
+                const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
+                const anticiposPorSocio = getAnticiposFromStorage();
+                const allPtData = getPartTimeDataFromStorage();
+
+                sociosData.forEach(socio => {
+                    const card = document.querySelector(`.socio-distribucion-card[data-socio-id="${socio.ID}"]`);
+                    if (!card) return;
+
+                    let propinaAsignada = 0;
+                    if (isPartTime(socio)) {
+                        const ptData = allPtData[socio.ID] || {};
+                        propinaAsignada = socio.puntosAntiguedad * (ptData.puntosCalculados || 0);
+                    } else { // Planta
+                        const topePuntos = socio.Area === 'Mesas' ? 20 : 12;
+                        propinaAsignada = Math.min(socio.puntosAntiguedad, topePuntos) * puntoPlanta;
+                    }
+                    socio.propinaAsignada = propinaAsignada;
+                    
+                    const anticiposSocio = anticiposPorSocio[socio.ID] || [];
+                    const totalAnticiposSocio = anticiposSocio.reduce((sum, ant) => sum + ant.cantidad, 0);
+
+                    card.querySelector('.propina-asignada').textContent = `$${formatNumber(propinaAsignada)}`;
+                    card.querySelector('.total-anticipos').textContent = `$${formatNumber(totalAnticiposSocio)}`;
+                    const saldoEl = card.querySelector('.saldo-disponible');
+                    const saldo = propinaAsignada - totalAnticiposSocio;
+                    saldoEl.textContent = `$${formatNumber(saldo)}`;
+                    saldoEl.classList.toggle('negative', saldo < 0);
+                });
+            };
+
+            async function apiCall(url, action, method = 'GET', body = null) {
+                if (!url) throw new Error(`URL para la acción '${action}' no configurada.`);
+                const fullUrl = (method === 'GET') ? `${url}?action=${action}` : url;
+                const options = { method, mode: 'cors' };
+                if (method === 'POST') {
+                    options.body = JSON.stringify({ action, ...body });
+                    options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+                }
+                const response = await fetch(fullUrl, options);
+                if (!response.ok) throw new Error(`Error de red: ${response.statusText}`);
+                const result = await response.json();
+                if (result.status !== 'success') throw new Error(result.message);
+                return result.data;
+            }
 
             async function fetchAndProcessSocios() {
                 try {
-                    const response = await fetch(`${SCRIPT_URL_SOCIOS}?action=getSocios`);
-                    if (!response.ok) throw new Error(`Error de red: ${response.status}`);
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        const sociosLocales = getSociosFromStorage();
-                        const sociosEnriquecidos = result.data.map(socioNube => {
-                           const socioLocal = sociosLocales.find(s => s.id === socioNube.id);
-                           const puntosCalc = calcularPuntosPropinaBase(socioNube.fechaIngreso, socioNube.area, socioNube.tipoContrato);
-                           return { ...socioNube, puntosPropina: socioNube.tipoContrato === 'Planta' ? puntosCalc.puntosConTope : 0, anticipos: socioLocal?.anticipos || [] };
-                        });
-                        saveSociosToStorage(sociosEnriquecidos);
-                    } else { throw new Error(result.message); }
-                } catch (error) { console.error('Error al obtener socios:', error); showToast('No se pudo cargar la lista de socios.', 'warning'); }
-            }
+                    const sociosDesdeNube = await apiCall(SCRIPT_URL_SOCIOS, 'getSocios');
+                    const allPtData = getPartTimeDataFromStorage();
+                    
+                    sociosData = sociosDesdeNube.map(socio => {
+                        if (isPartTime(socio) && !allPtData[socio.ID]) {
+                            allPtData[socio.ID] = { diasTrabajados: [], montoAsignable: 0, puntosCalculados: 0, multiplicador: 1 };
+                        }
+                        return {
+                            ...socio,
+                            puntosAntiguedad: calcularPuntosAntiguedad(socio.FechaIngreso),
+                            propinaAsignada: 0
+                        };
+                    });
 
-            async function fetchMontos() {
-                try {
-                    const response = await fetch(`${SCRIPT_URL_MONTOS}?action=get`);
-                    if (!response.ok) throw new Error(`Error de red: ${response.status}`);
-                    const result = await response.json();
-                    if (result.status === 'success' && Array.isArray(result.data)) {
-                         const nuevosMontos = result.data.map(entry => ({ fecha: entry.fecha, area: entry.tipo, cantidad: parseFloat(entry.monto) || 0 }));
-                         saveMontos(nuevosMontos);
-                    }
-                } catch (error) { console.error('Error de Auto-Sync de montos:', error); }
-            };
+                    savePartTimeDataToStorage(allPtData);
+                    sociosData.filter(isPartTime).forEach(recalcularMontoAsignableParaSocio);
 
-            async function runOneTimeMigration() {
-                const migrationCompleted = localStorage.getItem('migrationToSheetsCompleted');
-                if (migrationCompleted) return;
-                const oldSociosData = localStorage.getItem('socios');
-                const sociosAntiguos = oldSociosData ? JSON.parse(oldSociosData) : [];
-                if (sociosAntiguos.length === 0) { localStorage.setItem('migrationToSheetsCompleted', 'true'); return; }
-                showToast(`Migrando ${sociosAntiguos.length} socios locales...`, 'success');
-                try {
-                    const response = await fetch(SCRIPT_URL_SOCIOS, { method: 'POST', body: JSON.stringify({ action: 'migrateSocios', socios: sociosAntiguos }), headers: {'Content-Type': 'text/plain;charset=utf-8'} });
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('¡Migración completada!', 'success');
-                        localStorage.setItem('migrationToSheetsCompleted', 'true');
-                    } else { throw new Error(result.message || "Error del servidor."); }
-                } catch (error) { console.error("Error durante la migración:", error); showToast(`Falló la migración automática: ${error.message}`, 'danger'); }
+                } catch (error) {
+                    console.error('Error al obtener socios:', error);
+                    showToast(error.message, 'danger');
+                }
             }
             
+            async function fetchMontos() {
+                try {
+                    montosData = await apiCall(SCRIPT_URL_MONTOS, 'get');
+                } catch (error) {
+                    console.error('Error al obtener montos:', error);
+                    showToast(`No se pudo cargar los montos: ${error.message}`, 'danger');
+                }
+            };
+
             async function syncData() {
                 if (isSyncing) return;
                 isSyncing = true;
                 ui.syncIndicator.classList.add('visible');
                 ui.syncIndicator.textContent = 'Sincronizando...';
                 try {
-                    await Promise.all([fetchMontos(), fetchAndProcessSocios()]);
-                } catch (error) { console.error("Error en la sincronización:", error); showToast('Error al sincronizar.', 'warning');
-                } finally { isSyncing = false; ui.syncIndicator.classList.remove('visible'); updateAllUI(); }
+                    await fetchMontos();
+                    await fetchAndProcessSocios();
+                    updateAllUI();
+                } catch (error) {
+                    console.error("Error en la sincronización:", error);
+                    showToast(`Error de sincronización: ${error.message}`, 'danger');
+                } finally {
+                    isSyncing = false;
+                    ui.syncIndicator.classList.remove('visible');
+                }
+            }
+            
+            function abrirCalendarModal(socioId) {
+                const socio = sociosData.find(s => s.ID === socioId);
+                if (!socio) return;
+                ui.modalContainer.innerHTML = document.getElementById('templateCalendarModal').innerHTML;
+                const modal = ui.modalContainer.querySelector('.modal');
+                modal.querySelector('#calendarModalTitle').textContent = `Días Trabajados de ${socio.Nombre}`;
+                const flatpickrInput = modal.querySelector('#flatpickrInput');
+                const selectedDaysCount = modal.querySelector('#selectedDaysCount');
+                const saveBtn = modal.querySelector('#saveCalendarBtn');
+                
+                const allPtData = getPartTimeDataFromStorage();
+                const ptData = allPtData[socioId] || {};
+                const diasTrabajados = ptData.diasTrabajados || [];
+                
+                selectedDaysCount.textContent = diasTrabajados.length;
+                
+                flatpickrInstance = flatpickr(flatpickrInput, {
+                    mode: "multiple", dateFormat: "Y-m-d", locale: "es", defaultDate: diasTrabajados,
+                    onChange: (selectedDates) => {
+                        selectedDaysCount.textContent = selectedDates.length;
+                    }
+                });
+
+                saveBtn.onclick = () => {
+                    const selectedDates = flatpickrInstance.selectedDates.map(d => flatpickrInstance.formatDate(d, "Y-m-d"));
+                    allPtData[socioId] = { ...ptData, diasTrabajados: selectedDates };
+                    savePartTimeDataToStorage(allPtData);
+                    recalcularMontoAsignableParaSocio(socio);
+                    showToast('Días guardados.', 'success');
+                    updateAllUI();
+                    modal.style.display = 'none';
+                };
+                modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
+                modal.style.display = 'flex';
             }
 
-            // --- GESTIÓN DE EVENTOS ---
+            function abrirPartTimePointsModal(socioId) {
+                const socio = sociosData.find(s => s.ID === socioId);
+                if (!socio) return;
+                ui.modalContainer.innerHTML = document.getElementById('templatePartTimePointsModal').innerHTML;
+                const modal = ui.modalContainer.querySelector('.modal');
+                const ptData = getPartTimeDataFromStorage()[socioId] || { montoAsignable: 0, puntosCalculados: 0, multiplicador: 1 };
+                modal.querySelector('#partTimePointsModalTitle').textContent = `Calcular Puntos de ${socio.Nombre}`;
+                modal.querySelector('#partTimeModalBasePoints').textContent = socio.puntosAntiguedad;
+                modal.querySelector('#partTimeModalAssignableAmount').textContent = `$${formatNumber(ptData.montoAsignable)}`;
+                modal.querySelector('#partTimeMultiplicador').value = ptData.multiplicador || 1;
+                modal.querySelector('#partTimePointsValue').textContent = `Puntos: ${(ptData.puntosCalculados || 0).toFixed(2)}`;
+                setupNumericInputFormatting(modal.querySelector('#partTimeMultiplicador'));
+                modal.querySelector('#calculatePartTimePointsInternoBtn').onclick = () => {
+                    const multiplicador = parseNumber(modal.querySelector('#partTimeMultiplicador').value);
+                    if (!multiplicador || multiplicador <= 0) {
+                        showToast('El multiplicador debe ser un número mayor a 0.', 'danger');
+                        return;
+                    }
+                    const puntosCalculados = ptData.montoAsignable > 0 ? ptData.montoAsignable / multiplicador : 0;
+                    const allPtData = getPartTimeDataFromStorage();
+                    allPtData[socioId] = { ...ptData, puntosCalculados, multiplicador };
+                    savePartTimeDataToStorage(allPtData);
+                    showToast('Puntos Part-Time calculados.', 'success');
+                    updateAllUI();
+                    modal.style.display = 'none';
+                };
+                modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
+                modal.style.display = 'flex';
+            }
+
             function setupEventListeners() {
                 ui.menuToggle.addEventListener('click', (e) => { e.stopPropagation(); ui.sideMenu.classList.toggle('open'); ui.menuToggle.classList.toggle('active'); });
                 ui.mainContainer.addEventListener('click', () => { if (ui.sideMenu.classList.contains('open')) { ui.sideMenu.classList.remove('open'); ui.menuToggle.classList.remove('active'); } });
-                
                 document.querySelectorAll('.menu-link').forEach(link => {
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
@@ -420,125 +553,141 @@
                         document.getElementById(link.dataset.target).classList.add('active');
                         document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active-link'));
                         link.classList.add('active-link');
-                        if(link.dataset.target !== 'balanceContent') syncData();
                         if (window.innerWidth <= 991) { ui.sideMenu.classList.remove('open'); ui.menuToggle.classList.remove('active'); }
                     });
                 });
-
                 ui.registroSocioForm.addEventListener('submit', handleRegisterSocio);
                 document.querySelector('.show-punto-planta-btn').addEventListener('click', handleShowPuntoPlantaModal);
                 document.getElementById('addAnticipoBtn').addEventListener('click', handleShowAnticipoModal);
-                
                 document.body.addEventListener('click', e => {
                     if (e.target.matches('.edit-btn')) handleShowEditSocioModal(e.target.dataset.socioId);
                     if (e.target.matches('.delete-btn')) handleDeleteSocio(e.target.dataset.socioId);
+                    if (e.target.matches('.edit-anticipo-btn')) handleShowEditAnticipoModal(e.target.dataset.socioId, parseInt(e.target.dataset.anticipoIndex));
+                    if (e.target.matches('.delete-anticipo-btn')) handleDeleteAnticipo(e.target.dataset.socioId, parseInt(e.target.dataset.anticipoIndex));
+                    if (e.target.matches('.calendar-btn')) abrirCalendarModal(e.target.dataset.socioId);
+                    if (e.target.matches('.calculate-btn')) abrirPartTimePointsModal(e.target.dataset.socioId);
                 });
             }
-            
+
             async function handleRegisterSocio(e) {
                 e.preventDefault();
-                const form = e.target, btn = form.querySelector('button[type="submit"]');
-                const nuevoSocio = { nombre: form.nombre.value.trim(), apellido: form.apellido.value.trim(), fechaIngreso: form.fechaIngreso.value, area: form.area.value, tipoContrato: form.tipoContrato.value };
-                if (!nuevoSocio.nombre || !nuevoSocio.apellido || !nuevoSocio.fechaIngreso || !nuevoSocio.area || !nuevoSocio.tipoContrato) { showToast('Por favor, completa todos los campos.', 'danger'); return; }
-                btn.disabled = true; btn.textContent = 'Registrando...';
+                const form = e.target;
+                const socio = {
+                    Nombre: form.nombre.value, Apellido: form.apellido.value, FechaIngreso: form.fechaIngreso.value,
+                    Area: form.area.value, TipoContrato: form.tipoContrato.value
+                };
                 try {
-                    const response = await fetch(SCRIPT_URL_SOCIOS, { method: 'POST', body: JSON.stringify({ action: 'registerSocio', socio: nuevoSocio }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('Socio registrado.', 'success'); form.reset(); await syncData();
-                    } else { throw new Error(result.message || 'Error del servidor.'); }
-                } catch (error) { console.error('Error al registrar socio:', error); showToast(`Error: ${error.message}`, 'danger');
-                } finally { btn.disabled = false; btn.textContent = 'Registrar Socio'; }
+                    const nuevoSocio = await apiCall(SCRIPT_URL_SOCIOS, 'addSocio', 'POST', { socio });
+                    if (isPartTime(nuevoSocio)) {
+                        const allPtData = getPartTimeDataFromStorage();
+                        allPtData[nuevoSocio.ID] = { diasTrabajados: [], montoAsignable: 0, puntosCalculados: 0, multiplicador: 1 };
+                        savePartTimeDataToStorage(allPtData);
+                    }
+                    showToast('Socio registrado con éxito!', 'success');
+                    form.reset();
+                    await syncData();
+                } catch (error) { showToast(`Error al registrar: ${error.message}`, 'danger'); }
             }
 
             function handleShowPuntoPlantaModal() {
+                const totalPropinaBruta = montosData.reduce((sum, monto) => sum + parseFloat(monto.monto || monto.cantidad || 0), 0);
                 ui.modalContainer.innerHTML = document.getElementById('templatePuntoPlantaModal').innerHTML;
                 const modal = ui.modalContainer.querySelector('.modal');
-                setupNumericInputFormatting(modal.querySelector('#divisorPuntoPlanta'));
-                modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
-                modal.querySelector('#calcularPuntoPlantaInternoBtn').onclick = handleCalculatePuntoPlanta;
-                const totalPropinaBruta = getMontos().reduce((s, m) => s + m.cantidad, 0);
-                const socios = getSociosFromStorage();
-                const totalAnticipos = socios.reduce((s, c) => s + (c.anticipos || []).reduce((sa, a) => sa + a.cantidad, 0), 0);
-                const totalPuntosPlanta = socios.filter(s => s.tipoContrato === 'Planta').reduce((s, c) => s + (c.puntosPropina || 0), 0);
                 modal.querySelector('#propinaBrutaModal').textContent = `$${formatNumber(totalPropinaBruta)}`;
-                modal.querySelector('#retirosModal').textContent = `$${formatNumber(totalAnticipos)}`;
-                modal.querySelector('#propinaNetaModal').textContent = `$${formatNumber(totalPropinaBruta - totalAnticipos)}`;
-                modal.querySelector('#totalPuntosSociosModal').textContent = totalPuntosPlanta.toFixed(2);
+                setupNumericInputFormatting(modal.querySelector('#divisorPuntoPlanta'));
+                modal.querySelector('#calcularPuntoPlantaInternoBtn').onclick = () => handleCalculatePuntoPlanta(totalPropinaBruta);
+                modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
                 modal.style.display = 'flex';
             }
 
-            function handleCalculatePuntoPlanta() {
+            function handleCalculatePuntoPlanta(totalPropinaBruta) {
                 const modal = ui.modalContainer.querySelector('.modal');
-                const totalPropinaBruta = getMontos().reduce((s, m) => s + m.cantidad, 0);
                 const divisor = parseNumber(modal.querySelector('#divisorPuntoPlanta').value);
-                if (isNaN(divisor) || divisor <= 0) { showToast("Ingrese un divisor válido.", 'danger'); return; }
+                if (!divisor || divisor <= 0) {
+                    showToast('El divisor debe ser un número mayor a cero.', 'warning');
+                    return;
+                }
                 const puntoPlanta = totalPropinaBruta / divisor;
-                localStorage.setItem('lastPuntoPlantaValue', puntoPlanta.toFixed(2));
-                ui.puntoPlantaDisplay.textContent = `Último Punto-Planta: $${puntoPlanta.toLocaleString('es-CL', {minimumFractionDigits: 2})}`;
-                updateAllUI();
-                showToast("Punto-Planta calculado y guardado.", 'success');
-                modal.style.display = 'none';
+                localStorage.setItem('lastPuntoPlantaValue', puntoPlanta);
+                
+                modal.querySelector('#puntoPlantaValor').textContent = `Valor del Punto: $${formatNumber(puntoPlanta)}`;
+                showToast('Punto-Planta calculado y guardado.', 'success');
+                setTimeout(() => {
+                    updateAllUI();
+                    if (modal) modal.style.display = 'none';
+                }, 1500);
             }
-            
+
             function handleShowAnticipoModal() {
                 ui.modalContainer.innerHTML = document.getElementById('templateAddAnticipoModal').innerHTML;
                 const modal = ui.modalContainer.querySelector('.modal');
+                const datalist = modal.querySelector('#sociosAnticipoList');
+                datalist.innerHTML = sociosData.map(s => `<option value="${s.Nombre} ${s.Apellido}" data-id="${s.ID}">`).join('');
+                modal.querySelector('#anticipoSocioInput').addEventListener('input', handleAnticipoSocioSelection);
                 setupNumericInputFormatting(modal.querySelector('#anticipoCantidad'));
                 modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
-                modal.querySelector('#registroAnticipoForm').onsubmit = handleRegisterAnticipo;
-                modal.querySelector('#anticipoSocioInput').oninput = handleAnticipoSocioSelection;
-                modal.querySelector('#sociosAnticipoList').innerHTML = getSociosFromStorage().map((s, i) => `<option value="${s.nombre} ${s.apellido}" data-index="${i}"></option>`).join('');
-                modal.querySelector('#anticipoFecha').value = new Date().toISOString().split('T')[0];
+                modal.querySelector('form').onsubmit = handleRegisterAnticipo;
                 modal.style.display = 'flex';
             }
-            
+
             function handleAnticipoSocioSelection(e) {
-                const modal = e.target.closest('.modal');
+                const modal = ui.modalContainer.querySelector('.modal');
                 const infoContainer = modal.querySelector('#anticipoSocioInfoContainer');
-                const socioIdInput = modal.querySelector('#anticipoSocioId');
-                const selectedOption = Array.from(modal.querySelector('#sociosAnticipoList').options).find(option => option.value === e.target.value);
-                socioIdInput.value = selectedOption ? selectedOption.dataset.index : '';
-                const socioIndex = selectedOption ? parseInt(selectedOption.dataset.index) : -1;
-                if (socioIndex === -1) { infoContainer.style.display = 'none'; return; }
-                const socio = getSociosFromStorage()[socioIndex];
-                const propinaAsignada = socio.propinaAsignada || 0;
-                const totalAnticiposSocio = (socio.anticipos || []).reduce((sum, ant) => sum + ant.cantidad, 0);
-                infoContainer.querySelector('#infoPropinaAsignada').textContent = `$${formatNumber(propinaAsignada)}`;
-                infoContainer.querySelector('#infoAnticiposAnteriores').textContent = `$${formatNumber(totalAnticiposSocio)}`;
-                const saldoEl = infoContainer.querySelector('#infoSaldoDisponible');
-                saldoEl.textContent = `$${formatNumber(propinaAsignada - totalAnticiposSocio)}`;
-                saldoEl.parentElement.classList.toggle('negative', (propinaAsignada - totalAnticiposSocio) < 0);
-                infoContainer.style.display = 'block';
+                const selectedOption = Array.from(modal.querySelectorAll('#sociosAnticipoList option')).find(opt => opt.value === e.target.value);
+                if (selectedOption) {
+                    const socioId = selectedOption.dataset.id;
+                    modal.querySelector('#anticipoSocioId').value = socioId;
+                    const socio = sociosData.find(s => s.ID === socioId);
+                    const propinaAsignada = socio.propinaAsignada || 0;
+                    const anticiposAnteriores = (getAnticiposFromStorage()[socioId] || []).reduce((sum, a) => sum + a.cantidad, 0);
+                    const saldo = propinaAsignada - anticiposAnteriores;
+                    modal.querySelector('#infoPropinaAsignada').textContent = `$${formatNumber(propinaAsignada)}`;
+                    modal.querySelector('#infoAnticiposAnteriores').textContent = `$${formatNumber(anticiposAnteriores)}`;
+                    const saldoSpan = modal.querySelector('#infoSaldoDisponible');
+                    saldoSpan.textContent = `$${formatNumber(saldo)}`;
+                    saldoSpan.parentElement.classList.toggle('negative', saldo < 0);
+                    infoContainer.style.display = 'block';
+                } else {
+                    infoContainer.style.display = 'none';
+                    modal.querySelector('#anticipoSocioId').value = '';
+                }
             }
-            
+
             function handleRegisterAnticipo(e) {
                 e.preventDefault();
-                const modal = e.target.closest('.modal');
-                const socioIndex = parseInt(modal.querySelector('#anticipoSocioId').value);
-                if (isNaN(socioIndex)) { showToast('Seleccione un socio válido.', 'warning'); return; }
-                let socios = getSociosFromStorage();
-                const anticipoCantidad = parseNumber(modal.querySelector('#anticipoCantidad').value);
-                if (!socios[socioIndex].anticipos) socios[socioIndex].anticipos = [];
-                socios[socioIndex].anticipos.push({ fecha: modal.querySelector('#anticipoFecha').value, cantidad: anticipoCantidad });
-                saveSociosToStorage(socios);
+                const form = e.target;
+                const socioId = form.anticipoSocioId.value;
+                if (!socioId) {
+                    showToast('Por favor, selecciona un socio válido.', 'warning');
+                    return;
+                }
+                const anticipo = {
+                    fecha: form.anticipoFecha.value,
+                    cantidad: parseNumber(form.anticipoCantidad.value)
+                };
+                const todosAnticipos = getAnticiposFromStorage();
+                if (!todosAnticipos[socioId]) {
+                    todosAnticipos[socioId] = [];
+                }
+                todosAnticipos[socioId].push(anticipo);
+                saveAnticiposToStorage(todosAnticipos);
                 updateAllUI();
-                showToast('Anticipo registrado correctamente', 'success');
-                modal.style.display = 'none';
+                showToast('Anticipo registrado.', 'success');
+                ui.modalContainer.querySelector('.modal').style.display = 'none';
             }
 
             function handleShowEditSocioModal(socioId) {
-                const socio = getSociosFromStorage().find(s => s.id === socioId);
+                const socio = sociosData.find(s => s.ID === socioId);
                 if (!socio) return;
                 ui.modalContainer.innerHTML = document.getElementById('templateEditSocioModal').innerHTML;
                 const modal = ui.modalContainer.querySelector('.modal');
-                const form = modal.querySelector('form');
-                form.editSocioId.value = socio.id;
-                form.editNombre.value = socio.nombre;
-                form.editApellido.value = socio.apellido;
-                form.editFechaIngreso.value = socio.fechaIngreso;
-                form.editArea.value = socio.area;
-                form.editTipoContrato.value = socio.tipoContrato;
+                const form = modal.querySelector('#editSocioForm');
+                form.editSocioId.value = socio.ID;
+                form.editNombre.value = socio.Nombre;
+                form.editApellido.value = socio.Apellido;
+                form.editFechaIngreso.value = socio.FechaIngreso.split('T')[0];
+                form.editArea.value = socio.Area;
+                form.editTipoContrato.value = socio.TipoContrato;
                 modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
                 form.onsubmit = handleSaveEditSocio;
                 modal.style.display = 'flex';
@@ -546,63 +695,97 @@
 
             async function handleSaveEditSocio(e) {
                 e.preventDefault();
-                const form = e.target, btn = form.querySelector('button[type="submit"]');
-                const updatedSocio = {
-                    id: form.editSocioId.value,
-                    nombre: form.editNombre.value.trim(),
-                    apellido: form.editApellido.value.trim(),
-                    fechaIngreso: form.editFechaIngreso.value,
-                    area: form.editArea.value,
-                    tipoContrato: form.editTipoContrato.value,
+                const form = e.target;
+                const socio = {
+                    ID: form.editSocioId.value,
+                    Nombre: form.editNombre.value, Apellido: form.editApellido.value,
+                    FechaIngreso: form.editFechaIngreso.value, Area: form.editArea.value, TipoContrato: form.editTipoContrato.value
                 };
-                btn.disabled = true; btn.textContent = 'Guardando...';
                 try {
-                    const response = await fetch(SCRIPT_URL_SOCIOS, { method: 'POST', body: JSON.stringify({ action: 'updateSocio', socio: updatedSocio }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-                    const result = await response.json();
-                    if (result.status === 'success') {
-                        showToast('Socio actualizado.', 'success');
-                        ui.modalContainer.querySelector('.modal').style.display = 'none';
-                        await syncData();
-                    } else { throw new Error(result.message || 'Error del servidor.'); }
+                    await apiCall(SCRIPT_URL_SOCIOS, 'updateSocio', 'POST', { socio });
+                    showToast('Socio actualizado con éxito.', 'success');
+                    ui.modalContainer.querySelector('.modal').style.display = 'none';
+                    await syncData();
                 } catch (error) {
-                    console.error('Error al actualizar socio:', error);
-                    showToast(`Error: ${error.message}`, 'danger');
-                } finally {
-                    btn.disabled = false; btn.textContent = 'Guardar Cambios';
+                    showToast(`Error al actualizar: ${error.message}`, 'danger');
                 }
             }
 
             function handleDeleteSocio(socioId) {
-                const socio = getSociosFromStorage().find(s => s.id === socioId);
+                const socio = sociosData.find(s => s.ID === socioId);
                 if (!socio) return;
                 ui.modalContainer.innerHTML = document.getElementById('templateConfirmDeleteModal').innerHTML;
                 const modal = ui.modalContainer.querySelector('.modal');
-                modal.querySelector('#confirmDeleteText').textContent = `¿Estás seguro de que quieres eliminar a ${socio.nombre} ${socio.apellido}? Esta acción no se puede deshacer.`;
+                modal.querySelector('#confirmDeleteText').textContent = `¿Seguro que quieres eliminar a ${socio.Nombre} ${socio.Apellido}? Se borrarán también sus anticipos y datos de días trabajados.`;
                 modal.style.display = 'flex';
                 modal.querySelector('.cancel-btn').onclick = () => modal.style.display = 'none';
                 modal.querySelector('.confirm-delete-btn').onclick = async () => {
-                    const btn = modal.querySelector('.confirm-delete-btn');
-                    btn.disabled = true; btn.textContent = 'Eliminando...';
                     try {
-                        const response = await fetch(SCRIPT_URL_SOCIOS, { method: 'POST', body: JSON.stringify({ action: 'deleteSocio', socioId: socioId }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } });
-                        const result = await response.json();
-                        if (result.status === 'success') {
-                            showToast('Socio eliminado.', 'danger');
-                            modal.style.display = 'none';
-                            await syncData();
-                        } else { throw new Error(result.message || 'Error del servidor.'); }
+                        await apiCall(SCRIPT_URL_SOCIOS, 'deleteSocio', 'POST', { socioId });
+                        const allAnticipos = getAnticiposFromStorage();
+                        delete allAnticipos[socioId];
+                        saveAnticiposToStorage(allAnticipos);
+                        const allPtData = getPartTimeDataFromStorage();
+                        delete allPtData[socioId];
+                        savePartTimeDataToStorage(allPtData);
+                        showToast('Socio eliminado.', 'danger');
+                        modal.style.display = 'none';
+                        await syncData();
                     } catch (error) {
-                        console.error('Error al eliminar socio:', error);
-                        showToast(`Error: ${error.message}`, 'danger');
-                        btn.disabled = false; btn.textContent = 'Eliminar';
+                        showToast(`Error al eliminar: ${error.message}`, 'danger');
                     }
+                };
+            }
+
+            function handleShowEditAnticipoModal(socioId, anticipoIndex) {
+                ui.modalContainer.innerHTML = document.getElementById('templateEditAnticipoModal').innerHTML;
+                const modal = ui.modalContainer.querySelector('.modal');
+                const form = modal.querySelector('form');
+                const cantidadInput = modal.querySelector('#editAnticipoCantidad');
+                setupNumericInputFormatting(cantidadInput);
+                const anticipo = getAnticiposFromStorage()[socioId][anticipoIndex];
+                form.dataset.socioId = socioId;
+                form.dataset.anticipoIndex = anticipoIndex;
+                form.editAnticipoFecha.value = anticipo.fecha;
+                cantidadInput.value = formatNumber(anticipo.cantidad);
+                modal.querySelector('.close-button').onclick = () => modal.style.display = 'none';
+                form.onsubmit = handleSaveEditAnticipo;
+                modal.style.display = 'flex';
+            }
+
+            function handleSaveEditAnticipo(e) {
+                e.preventDefault();
+                const form = e.target;
+                const socioId = form.dataset.socioId;
+                const anticipoIndex = parseInt(form.dataset.anticipoIndex);
+                const nuevaCantidad = parseNumber(form.editAnticipoCantidad.value);
+                const nuevaFecha = form.editAnticipoFecha.value;
+                let todosAnticipos = getAnticiposFromStorage();
+                todosAnticipos[socioId][anticipoIndex] = { fecha: nuevaFecha, cantidad: nuevaCantidad };
+                saveAnticiposToStorage(todosAnticipos);
+                updateAllUI();
+                showToast('Anticipo actualizado.', 'success');
+                ui.modalContainer.querySelector('.modal').style.display = 'none';
+            }
+
+            function handleDeleteAnticipo(socioId, anticipoIndex) {
+                ui.modalContainer.innerHTML = document.getElementById('templateConfirmDeleteModal').innerHTML;
+                const modal = ui.modalContainer.querySelector('.modal');
+                modal.querySelector('#confirmDeleteText').textContent = `¿Estás seguro de que quieres eliminar este anticipo?`;
+                modal.style.display = 'flex';
+                modal.querySelector('.cancel-btn').onclick = () => modal.style.display = 'none';
+                modal.querySelector('.confirm-delete-btn').onclick = () => {
+                    let todosAnticipos = getAnticiposFromStorage();
+                    todosAnticipos[socioId].splice(anticipoIndex, 1);
+                    saveAnticiposToStorage(todosAnticipos);
+                    updateAllUI();
+                    showToast('Anticipo eliminado.', 'danger');
+                    modal.style.display = 'none';
                 };
             }
 
             async function initializeApp() {
                 setupEventListeners();
-                updateAllUI();
-                await runOneTimeMigration();
                 await syncData();
                 setInterval(syncData, 60000);
             }
@@ -612,3 +795,5 @@
     </script>
 </body>
 </html>
+
+
