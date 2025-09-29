@@ -1,11 +1,9 @@
-<!-- CÓDIGO FINAL CORREGIDO CON CONEXIONES, LÓGICA PART-TIME, CÁLCULO DE PUNTO-PLANTA, CONTADOR DE PUNTOS, DESCUENTOS Y FORMATO DE FECHA DD-MM-YYYY -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Propina (Fechas DD-MM-YYYY)</title>
-    <!-- Librerías para el calendario -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
     <style>
@@ -340,11 +338,10 @@
                 
                 let totalPuntosPlanta = 0;
                 let totalPuntosPartTime = 0;
-                const allPtData = getPartTimeDataFromStorage();
                 sociosData.forEach(socio => {
                     if (isPartTime(socio)) {
-                        const ptData = allPtData[socio.ID] || {};
-                        totalPuntosPartTime += (ptData.puntosCalculados || 0);
+                        // MODIFICACIÓN SOLICITADA: Para el total, sumar la antigüedad de los Part-Time
+                        totalPuntosPartTime += socio.puntosAntiguedad;
                     } else {
                         const topePuntos = socio.Area === 'Mesas' ? 20 : 12;
                         const puntosFinales = Math.min(socio.puntosAntiguedad, topePuntos);
