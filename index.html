@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-        :root{--menu-width:250px;--primary-color:#3498db;--primary-hover-color:#2980b9;--secondary-color:#2ecc71;--danger-color:#e74c3c;--warning-color:#f39c12;--light-bg:#eef2f6;--white-bg:#fff;--text-dark:#2c3e50;--text-light:#555;--border-color:#e0e6ed}body{font-family:'Poppins',sans-serif;margin:0;background-color:var(--light-bg);color:#333}.menu-toggle{position:fixed;top:15px;left:15px;z-index:1002;width:40px;height:40px;background-color:var(--primary-color);border:none;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:left .3s ease}.menu-toggle span{display:block;width:22px;height:2px;background-color:#fff;margin:2px 0;transition:all .3s ease}.side-menu.open+.main-container .menu-toggle{left:calc(var(--menu-width) + 15px)}.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}.menu-toggle.active span:nth-child(2){opacity:0}.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}.side-menu{position:fixed;top:0;left:0;width:var(--menu-width);height:100%;background-color:var(--text-dark);z-index:1001;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;padding-top:60px;box-shadow:5px 0 15px rgba(0,0,0,.1)}.side-menu.open{transform:translateX(0)}.side-menu .menu-header{color:#fff;font-size:1.5em;font-weight:700;text-align:center;padding:20px 10px;border-bottom:1px solid #4a627a}.side-menu a{color:#fff;text-decoration:none;padding:15px 20px;display:block;font-size:1em;transition:background-color .2s ease,padding-left .2s ease;border-bottom:1px solid #3e5268}.side-menu a:hover,.side-menu a.active-link{background-color:var(--primary-color);padding-left:25px}.main-container{transition:margin-left .3s ease;padding:15px}.container{max-width:960px;margin:10px auto;background-color:var(--white-bg);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,.07)}h1{color:var(--text-dark);text-align:center;margin-bottom:20px;font-weight:700;font-size:1.8em;padding-top:45px}h2{color:var(--primary-color);margin:0 0 20px;font-weight:600;font-size:1.5em;border-bottom:2px solid var(--border-color);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center}#sync-indicator{font-size:.6em;font-weight:400;color:var(--text-light);opacity:0;transition:opacity .3s}#sync-indicator.visible{opacity:1}h3{color:var(--primary-color);margin-top:25px;margin-bottom:10px;font-size:1.4em}.content-panel{display:none}.content-panel.active{display:block;animation:fadeIn .5s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}label{display:block;margin-bottom:7px;font-weight:600;color:var(--text-light)}input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:10px;margin-bottom:18px;border:1px solid #dcdcdc;border-radius:6px;box-sizing:border-box;font-size:1em}input:focus,select:focus,textarea:focus{border-color:var(--primary-color);outline:0;box-shadow:0 0 0 3px rgba(52,152,219,.2)}button{background-color:var(--secondary-color);color:#fff;padding:10px 15px;border:none;border-radius:6px;cursor:pointer;font-size:1em;font-weight:600;width:100%;transition:background-color .3s ease,transform .2s ease;margin-top:8px}button:hover{background-color:#27ae60;transform:translateY(-1px)}button:disabled{background-color:#bdc3c7;cursor:not-allowed}button.cancel-btn{background-color:#95a5a6}.socios-list-container{margin-top:30px;border-top:2px solid var(--border-color)}.socio-card{padding:15px;background-color:#f7f9fc;border-radius:8px;margin-bottom:10px;border:1px solid #dbe9f5}.socio-card-info p{margin:4px 0;color:var(--text-light)}.socio-card-info p strong{color:var(--text-dark)}.socio-card-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:15px;border-top:1px solid #e0e6ed;padding-top:10px}.socio-card-actions button{width:auto;font-size:.9em;padding:6px 10px}.socio-card-actions .edit-btn{background-color:var(--primary-color)}.socio-card-actions .delete-btn{background-color:var(--danger-color)}.distribucion-planta-container,.distribucion-part-time-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:15px;padding-top:15px;border-top:1px solid var(--border-color)}.socio-distribucion-card{background-color:#f7f9fc;border:1px solid #dbe9f5;border-radius:10px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06)}.anticipos-list-container{margin-top:15px;padding-top:10px;border-top:1px dashed var(--border-color)}.anticipos-list-container h4{margin:0 0 10px;font-size:1em;color:var(--text-dark)}.anticipo-item,.descuento-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.9em;border-bottom:1px solid #eef2f6}.anticipo-item:last-child,.descuento-item:last-child{border-bottom:none}.anticipo-item-info,.descuento-item-info{display:flex;flex-direction:column;flex-grow:1}.anticipo-item-info span,.descuento-item-info span{color:var(--text-light)}.anticipo-item-info .monto,.descuento-item-info .monto{font-weight:600;color:var(--text-dark)}.descuento-item-info .categoria{font-size:0.85em;font-style:italic;color:var(--primary-color)}.anticipo-item-actions,.descuento-item-actions{display:flex;gap:5px}.anticipo-item-actions button,.descuento-item-actions button{font-size:.8em;padding:4px 8px;margin:0;width:auto}.anticipo-item-actions .edit-anticipo-btn,.descuento-item-actions .edit-descuento-btn{background-color:var(--warning-color)}.anticipo-item-actions .delete-anticipo-btn,.descuento-item-actions .delete-descuento-btn{background-color:var(--danger-color)}.general-total{background-color:var(--secondary-color);color:#fff;padding:12px 15px;border-radius:8px;margin-bottom:15px;text-align:center;font-size:1.3em;font-weight:700}.action-button-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:15px 0} /* CAMBIADO: 1fr 1fr 1fr */ .show-punto-planta-btn{background-color:#9b59b6}#addAnticipoBtn{background-color:var(--primary-color)}.modal{display:none;position:fixed;z-index:1001;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);justify-content:center;align-items:center;animation:fadeInModal .3s}@keyframes fadeInModal{from{opacity:0}to{opacity:1}}.modal-content{background-color:#fefefe;padding:25px;border-radius:10px;width:90%;max-width:450px;text-align:center}.modal-content h3,.modal-content p,.modal-content label{text-align:left}.modal-content .modal-actions{display:flex;justify-content:space-around;margin-top:20px}.modal-content .modal-actions button{width:45%}.close-button{position:absolute;top:10px;right:15px;color:#aaa;font-size:28px;font-weight:700;cursor:pointer}#balanceReport{padding:15px;border-radius:8px;background-color:#f8f9fa}#balanceReport p{margin:0;padding:8px 0;display:flex;justify-content:space-between;font-size:1.1em}#balanceReport p strong{color:var(--text-dark)}#balanceReport .balance-saldo.negative{color:var(--danger-color)}#balanceReport hr{border:0;border-top:1px solid var(--border-color);margin:8px 0}.anticipo-socio-info{background-color:#e6f7ff;border:1px solid #91d5ff;border-radius:8px;padding:15px;margin:20px 0}.anticipo-socio-info .saldo-disponible.negative span{color:var(--danger-color)}#toast-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;align-items:center;gap:10px}.toast{background-color:var(--text-dark);color:#fff;padding:12px 20px;border-radius:25px;box-shadow:0 4px 15px rgba(0,0,0,.1);font-size:.9em;font-weight:500;opacity:0;transform:translateY(20px);transition:opacity .3s ease,transform .3s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background-color:var(--secondary-color)}.toast.danger{background-color:var(--danger-color)}.part-time-actions{display:flex;flex-direction:column;gap:8px;margin-top:10px;border-top:1px solid var(--border-color);padding-top:10px}.part-time-actions button{width:100%;padding:8px;font-size:.85em}.part-time-actions .calendar-btn{background-color:#f39c12}.part-time-actions .calculate-btn{background-color:#1abc9c}.distribucion-part-time-container .puntos-calculados-pt{font-weight:700;color:#16a085}@media (min-width:992px){.menu-toggle{display:none}.side-menu{transform:translateX(0)}.main-container{margin-left:var(--menu-width)}.container h1{padding-top:0}}
+        :root{--menu-width:250px;--primary-color:#3498db;--primary-hover-color:#2980b9;--secondary-color:#2ecc71;--danger-color:#e74c3c;--warning-color:#f39c12;--light-bg:#eef2f6;--white-bg:#fff;--text-dark:#2c3e50;--text-light:#555;--border-color:#e0e6ed}body{font-family:'Poppins',sans-serif;margin:0;background-color:var(--light-bg);color:#333}.menu-toggle{position:fixed;top:15px;left:15px;z-index:1002;width:40px;height:40px;background-color:var(--primary-color);border:none;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:left .3s ease}.menu-toggle span{display:block;width:22px;height:2px;background-color:#fff;margin:2px 0;transition:all .3s ease}.side-menu.open+.main-container .menu-toggle{left:calc(var(--menu-width) + 15px)}.menu-toggle.active span:nth-child(1){transform:translateY(6px) rotate(45deg)}.menu-toggle.active span:nth-child(2){opacity:0}.menu-toggle.active span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}.side-menu{position:fixed;top:0;left:0;width:var(--menu-width);height:100%;background-color:var(--text-dark);z-index:1001;transform:translateX(-100%);transition:transform .3s ease;display:flex;flex-direction:column;padding-top:60px;box-shadow:5px 0 15px rgba(0,0,0,.1)}.side-menu.open{transform:translateX(0)}.side-menu .menu-header{color:#fff;font-size:1.5em;font-weight:700;text-align:center;padding:20px 10px;border-bottom:1px solid #4a627a}.side-menu a{color:#fff;text-decoration:none;padding:15px 20px;display:block;font-size:1em;transition:background-color .2s ease,padding-left .2s ease;border-bottom:1px solid #3e5268}.side-menu a:hover,.side-menu a.active-link{background-color:var(--primary-color);padding-left:25px}.main-container{transition:margin-left .3s ease;padding:15px}.container{max-width:960px;margin:10px auto;background-color:var(--white-bg);padding:20px;border-radius:12px;box-shadow:0 8px 25px rgba(0,0,0,.07)}h1{color:var(--text-dark);text-align:center;margin-bottom:20px;font-weight:700;font-size:1.8em;padding-top:45px}h2{color:var(--primary-color);margin:0 0 20px;font-weight:600;font-size:1.5em;border-bottom:2px solid var(--border-color);padding-bottom:10px;display:flex;justify-content:space-between;align-items:center}#sync-indicator{font-size:.6em;font-weight:400;color:var(--text-light);opacity:0;transition:opacity .3s}#sync-indicator.visible{opacity:1}h3{color:var(--primary-color);margin-top:25px;margin-bottom:10px;font-size:1.4em}.content-panel{display:none}.content-panel.active{display:block;animation:fadeIn .5s ease}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}label{display:block;margin-bottom:7px;font-weight:600;color:var(--text-light)}input[type=text],input[type=date],input[type=number],select,textarea{width:100%;padding:10px;margin-bottom:18px;border:1px solid #dcdcdc;border-radius:6px;box-sizing:border-box;font-size:1em}input:focus,select:focus,textarea:focus{border-color:var(--primary-color);outline:0;box-shadow:0 0 0 3px rgba(52,152,219,.2)}button{background-color:var(--secondary-color);color:#fff;padding:10px 15px;border:none;border-radius:6px;cursor:pointer;font-size:1em;font-weight:600;width:100%;transition:background-color .3s ease,transform .2s ease;margin-top:8px}button:hover{background-color:#27ae60;transform:translateY(-1px)}button:disabled{background-color:#bdc3c7;cursor:not-allowed}button.cancel-btn{background-color:#95a5a6}.socios-list-container{margin-top:30px;border-top:2px solid var(--border-color)}.socio-card{padding:15px;background-color:#f7f9fc;border-radius:8px;margin-bottom:10px;border:1px solid #dbe9f5}.socio-card-info p{margin:4px 0;color:var(--text-light)}.socio-card-info p strong{color:var(--text-dark)}.socio-card-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:15px;border-top:1px solid #e0e6ed;padding-top:10px}.socio-card-actions button{width:auto;font-size:.9em;padding:6px 10px}.socio-card-actions .edit-btn{background-color:var(--primary-color)}.socio-card-actions .delete-btn{background-color:var(--danger-color)}.distribucion-planta-container,.distribucion-part-time-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:15px;padding-top:15px;border-top:1px solid var(--border-color)}.socio-distribucion-card{background-color:#f7f9fc;border:1px solid #dbe9f5;border-radius:10px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06)}.anticipos-list-container{margin-top:15px;padding-top:10px;border-top:1px dashed var(--border-color)}.anticipos-list-container h4{margin:0 0 10px;font-size:1em;color:var(--text-dark)}.anticipo-item,.descuento-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:.9em;border-bottom:1px solid #eef2f6}.anticipo-item:last-child,.descuento-item:last-child{border-bottom:none}.anticipo-item-info,.descuento-item-info{display:flex;flex-direction:column;flex-grow:1}.anticipo-item-info span,.descuento-item-info span{color:var(--text-light)}.anticipo-item-info .monto,.descuento-item-info .monto{font-weight:600;color:var(--text-dark)}.descuento-item-info .categoria{font-size:0.85em;font-style:italic;color:var(--primary-color)}.anticipo-item-actions,.descuento-item-actions{display:flex;gap:5px}.anticipo-item-actions button,.descuento-item-actions button{font-size:.8em;padding:4px 8px;margin:0;width:auto}.anticipo-item-actions .edit-anticipo-btn,.descuento-item-actions .edit-descuento-btn{background-color:var(--warning-color)}.anticipo-item-actions .delete-anticipo-btn,.descuento-item-actions .delete-descuento-btn{background-color:var(--danger-color)}.general-total{background-color:var(--secondary-color);color:#fff;padding:12px 15px;border-radius:8px;margin-bottom:15px;text-align:center;font-size:1.3em;font-weight:700}.action-button-group{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:15px 0}.show-punto-planta-btn{background-color:#9b59b6}#addAnticipoBtn{background-color:var(--primary-color)}.modal{display:none;position:fixed;z-index:1001;left:0;top:0;width:100%;height:100%;background-color:rgba(0,0,0,.6);justify-content:center;align-items:center;animation:fadeInModal .3s}@keyframes fadeInModal{from{opacity:0}to{opacity:1}}.modal-content{background-color:#fefefe;padding:25px;border-radius:10px;width:90%;max-width:450px;text-align:center}.modal-content h3,.modal-content p,.modal-content label{text-align:left}.modal-content .modal-actions{display:flex;justify-content:space-around;margin-top:20px}.modal-content .modal-actions button{width:45%}.close-button{position:absolute;top:10px;right:15px;color:#aaa;font-size:28px;font-weight:700;cursor:pointer}#balanceReport{padding:15px;border-radius:8px;background-color:#f8f9fa}#balanceReport p{margin:0;padding:8px 0;display:flex;justify-content:space-between;font-size:1.1em}#balanceReport p strong{color:var(--text-dark)}#balanceReport .balance-saldo.negative{color:var(--danger-color)}#balanceReport hr{border:0;border-top:1px solid var(--border-color);margin:8px 0}.anticipo-socio-info{background-color:#e6f7ff;border:1px solid #91d5ff;border-radius:8px;padding:15px;margin:20px 0}.anticipo-socio-info .saldo-disponible.negative span{color:var(--danger-color)}#toast-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:2000;display:flex;flex-direction:column;align-items:center;gap:10px}.toast{background-color:var(--text-dark);color:#fff;padding:12px 20px;border-radius:25px;box-shadow:0 4px 15px rgba(0,0,0,.1);font-size:.9em;font-weight:500;opacity:0;transform:translateY(20px);transition:opacity .3s ease,transform .3s ease}.toast.show{opacity:1;transform:translateY(0)}.toast.success{background-color:var(--secondary-color)}.toast.danger{background-color:var(--danger-color)}.part-time-actions{display:flex;flex-direction:column;gap:8px;margin-top:10px;border-top:1px solid var(--border-color);padding-top:10px}.part-time-actions button{width:100%;padding:8px;font-size:.85em}.part-time-actions .calendar-btn{background-color:#f39c12}.part-time-actions .calculate-btn{background-color:#1abc9c}.distribucion-part-time-container .puntos-calculados-pt{font-weight:700;color:#16a085}@media (min-width:992px){.menu-toggle{display:none}.side-menu{transform:translateX(0)}.main-container{margin-left:var(--menu-width)}.container h1{padding-top:0}}
     </style>
 </head>
 <body>
@@ -35,6 +35,14 @@
                 </div>
                 <button type="button" id="addDescuentoBtn" style="background-color: var(--warning-color); margin-top: 20px;">Registrar Descuento Operacional</button>
                 <div id="descuentosListContainer" style="margin-top: 20px;"></div>
+                
+                <div id="ultimaDistribucionReport" style="margin-top: 20px; padding: 15px; border-radius: 8px; background-color: #ffeae8; border: 1px solid #d9534f; display: none;">
+                    <h3>Última Distribución Guardada</h3>
+                    <p><strong>Fecha de Guardado:</strong> <span id="ultimaDistFecha">N/A</span></p>
+                    <p><strong>Propina Neta Distribuida:</strong> <span id="ultimaDistNeta">$0</span></p>
+                    <p><strong>Punto Planta Calculado:</strong> <span id="ultimaDistPunto">$0</span></p>
+                    <button id="cargarUltimaDistribucionBtn" style="background-color: var(--primary-color); margin-top: 10px;">Cargar datos en Distribución</button>
+                </div>
             </div>
             <div id="registroContent" class="content-panel">
                 <h2>Registrar Nuevo Socio (en Sheets)</h2>
@@ -49,6 +57,11 @@
                 <div class="general-total" id="totalGeneralPropinaNetaDistribucion"></div>
                 <div id="totalPuntosDisplay" style="text-align:center; font-weight:bold; background-color:#eafaf1; padding:10px; border-radius:8px; margin-top: 15px; margin-bottom: 15px; border: 1px solid #c3e6cb;"></div>
                 <div class="punto-planta-display-general" id="puntoPlantaDisplay"></div>
+                
+                <button type="button" id="loadDistribucionBtn" style="background-color: var(--primary-hover-color); margin-bottom: 15px; padding: 12px;">
+                    Cargar Última Distribución Guardada
+                </button>
+                
                 <div class="action-button-group">
                     <button type="button" class="show-punto-planta-btn">Calcular Punto-Planta</button>
                     <button type="button" id="addAnticipoBtn">Registrar Nuevo Anticipo</button>
@@ -206,7 +219,8 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- CONEXIONES CON GOOGLE SHEETS --- ¡¡¡NO TOCAR!!!
+            // --- CONEXIONES CON GOOGLE SHEETS --- ¡¡¡IMPORTANTE!!!
+            // ASEGÚRATE DE QUE ESTAS URLs SON CORRECTAS PARA TU PROYECTO.
             const SCRIPT_URL_MONTOS = 'https://script.google.com/macros/s/AKfycbxna9EH5LZPTPCPws58pGro6qCrZ8_zNwvUkUHS28BYfd8CsAcD1MRcqlITbDm4lTk/exec'; // Para Balance (Propina Bruta)
             const SCRIPT_URL_SOCIOS = 'https://script.google.com/macros/s/AKfycbwoc3UKlGSTZ1AtNvo1BLq2lYNr0NYsMu30iy-AH4E_5V470FewJ9AuvPz47bMiyG2DaA/exec'; // Para Socios
             
@@ -231,20 +245,32 @@
                 sociosListContainer: document.getElementById('sociosListContainer'),
                 descuentosListContainer: document.getElementById('descuentosListContainer'),
                 registroSocioForm: document.getElementById('registroSocioForm'),
+                ultimaDistribucionReport: document.getElementById('ultimaDistribucionReport'),
+                ultimaDistFecha: document.getElementById('ultimaDistFecha'),                 
+                ultimaDistNeta: document.getElementById('ultimaDistNeta'),                   
+                ultimaDistPunto: document.getElementById('ultimaDistPunto'),                 
+                cargarUltimaDistribucionBtn: document.getElementById('cargarUltimaDistribucionBtn'), // Botón en Balance
+                loadDistribucionBtn: document.getElementById('loadDistribucionBtn'), // Nuevo botón en Distribución
+                totalPuntosDisplay: document.getElementById('totalPuntosDisplay'),
             };
 
             let isSyncing = false;
             let sociosData = [];
             let montosData = [];
+            let ultimaDistribucionData = null; 
             let flatpickrInstance = null;
             
-            // --- FUNCIÓN PARA FORMATEAR FECHAS ---
+            // --- FUNCIONES DE UTILIDAD ---
             const formatDisplayDate = (dateStr) => {
                 if (!dateStr || !/^\d{4}-\d{2}-\d{2}/.test(dateStr)) {
-                    return dateStr; // Devuelve el original si no es formato YYYY-MM-DD
+                    return dateStr; 
                 }
-                const [year, month, day] = dateStr.split('T')[0].split('-');
-                return `${day}-${month}-${year}`;
+                const parts = dateStr.split('T')[0].split('-');
+                if (parts.length === 3) {
+                    const [year, month, day] = parts;
+                    return `${day}-${month}-${year}`;
+                }
+                return dateStr;
             };
 
             const showToast = (message, type = 'success') => {
@@ -304,6 +330,7 @@
                 let montoAsignable = 0;
                 diasTrabajados.forEach(dia => {
                     montosData.forEach(monto => {
+                        // Importante: Montos vienen con fecha YYYY-MM-DD
                         if (monto.fecha === dia) {
                             montoAsignable += parseFloat(monto.monto || monto.cantidad || 0);
                         }
@@ -357,13 +384,13 @@
                         const ptData = allPtData[socio.ID] || {};
                         const puntosCalculados = ptData.puntosCalculados || 0;
                         
-                        // CÁLCULO PARA EL TOTAL DE PUNTOS DISTRIBUIDOS (CORREGIDO: Suma los PUNTOS ANTIGÜEDAD BASE)
+                        // CÁLCULO PARA EL TOTAL DE PUNTOS DISTRIBUIDOS (Part-Time: Puntos Antigüedad Base)
                         totalPuntosPartTime += socio.puntosAntiguedad; 
                         
-                        // CÁLCULO DE PROPINA ASIGNADA (Usa Puntos Antigüedad BASE * Puntos Calculados PT)
+                        // CÁLCULO DE PROPINA ASIGNADA
                         socio.propinaAsignada = socio.puntosAntiguedad * puntosCalculados;
                         
-                        // Valor a guardar en el reporte final para Part-Time (los Puntos Antigüedad)
+                        // Valor a guardar en el reporte final para Part-Time (los Puntos Antigüedad Base)
                         socio.puntosAsignadosFinales = socio.puntosAntiguedad; 
 
                     } else {
@@ -381,8 +408,8 @@
                 
                 const totalPuntosGeneral = totalPuntosPlanta + totalPuntosPartTime;
                 
-                document.getElementById('totalPuntosDisplay').innerHTML = `Puntos Totales Distribuidos: <strong>${totalPuntosGeneral.toFixed(2)}</strong> 
-                    <span style="font-size: 0.8em; color: #555;">(Planta: ${totalPuntosPlanta.toFixed(0)} + Part-Time: ${totalPuntosPartTime.toFixed(0)})</span>`;
+                ui.totalPuntosDisplay.innerHTML = `Puntos Totales Distribuidos: <strong>${totalPuntosGeneral.toFixed(2)}</strong> 
+                    <span style="font-size: 0.8em; color: #555;">(Planta: ${totalPuntosPlanta.toFixed(0)} + Part-Time: ${totalPuntosPartTime.toFixed(2)})</span>`;
 
                 const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
                 if (puntoPlanta > 0) {
@@ -392,7 +419,64 @@
                 }
                 renderSocios(sociosData);
                 renderDescuentos(descuentos);
+                renderUltimaDistribucion();
             };
+
+            // FUNCIÓN para renderizar la última distribución
+            const renderUltimaDistribucion = () => {
+                if (ultimaDistribucionData && ultimaDistribucionData.resumen) {
+                    const resumen = ultimaDistribucionData.resumen;
+                    ui.ultimaDistFecha.textContent = formatDisplayDate(resumen.fecha);
+                    ui.ultimaDistNeta.textContent = `$${formatNumber(resumen.propinaNeta)}`;
+                    ui.ultimaDistPunto.textContent = `$${formatNumber(resumen.puntoPlanta)}`;
+                    ui.ultimaDistribucionReport.style.display = 'block';
+                } else {
+                    ui.ultimaDistribucionReport.style.display = 'none';
+                }
+            };
+            
+            // FUNCIÓN para cargar la última distribución
+            const handleLoadUltimaDistribucion = () => {
+                if (!ultimaDistribucionData || !ultimaDistribucionData.resumen || !ultimaDistribucionData.distribucion) {
+                    showToast('No hay datos de distribución previa para cargar.', 'danger');
+                    return;
+                }
+                
+                const resumen = ultimaDistribucionData.resumen;
+                const distribucion = ultimaDistribucionData.distribucion;
+                const allPtData = getPartTimeDataFromStorage();
+
+                // 1. Cargar el Punto Planta
+                localStorage.setItem('lastPuntoPlantaValue', resumen.puntoPlanta);
+                
+                // 2. Aplicar los Puntos Finales a cada socio
+                distribucion.forEach(distSocio => {
+                    const socio = sociosData.find(s => s.ID === distSocio.ID);
+                    if (socio && isPartTime(socio)) {
+                        // Reversa para obtener el 'puntosCalculados' (Multiplicador PT)
+                        // PropinaAsignada = Puntos Antigüedad * Multiplicador
+                        const puntosCalculados = distSocio.PropinaAsignada / distSocio.PuntosAntiguedad;
+                        const ptData = allPtData[socio.ID] || {};
+                        allPtData[socio.ID] = { 
+                            ...ptData, 
+                            puntosCalculados: puntosCalculados || 0,
+                            // Mantenemos el multiplicador original si existe, o usamos un valor predeterminado.
+                            multiplicador: ptData.multiplicador || 1 
+                        };
+                    }
+                });
+                savePartTimeDataToStorage(allPtData);
+
+                // 3. Forzar el cambio de pestaña a Distribución
+                document.querySelectorAll('.content-panel').forEach(p => p.classList.remove('active'));
+                document.getElementById('distribucionContent').classList.add('active');
+                document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active-link'));
+                document.querySelector('.menu-link[data-target="distribucionContent"]').classList.add('active-link');
+
+                showToast('Última distribución cargada con éxito.', 'success');
+                updateAllUI();
+            }
+
 
             const renderDescuentos = (descuentos) => {
                 ui.descuentosListContainer.innerHTML = '<h3>Descuentos Operacionales Registrados</h3>';
@@ -452,7 +536,6 @@
                         
                         gruposSocios[area][contrato].forEach((socio) => {
                             const socioCard = createSocioManageCard(socio);
-                            // Las tarjetas de gestión de socios se agregan aquí
                             areaGroup.appendChild(socioCard);
 
                             // 2. SEPARAR Y RENDERIZAR LAS TARJETAS DE DISTRIBUCIÓN
@@ -524,7 +607,7 @@
                 let topePuntos;
                 if (socio.Area === 'Mesas') {
                     topePuntos = 20;
-                } else if (socio.Area === 'Boveda') { 
+                } else if (socio.Area === 'Boveda') {
                     topePuntos = 10;
                 } else {
                     topePuntos = 12; 
@@ -578,16 +661,16 @@
                         
                         // LÓGICA DE ASIGNACIÓN PART-TIME: Puntos Antigüedad Base * Puntos Calculados PT
                         propinaAsignada = socio.puntosAntiguedad * puntosCalculados; 
-                        puntosAsignadosFinales = socio.puntosAntiguedad; // <--- Puntos Antigüedad Base (para el total)
+                        puntosAsignadosFinales = socio.puntosAntiguedad; 
                         
                     } else {
                         // LÓGICA DE ASIGNACIÓN PLANTA: Puntos Finales * Punto Planta
                         propinaAsignada = puntosFinalesPlanta * puntoPlanta;
-                        puntosAsignadosFinales = puntosFinalesPlanta; // <--- Puntos con Tope (para el total)
+                        puntosAsignadosFinales = puntosFinalesPlanta; 
                     }
                     
-                    socio.propinaAsignada = propinaAsignada; // Almacenar para el guardado
-                    socio.puntosAsignadosFinales = puntosAsignadosFinales; // Almacenar para el guardado
+                    socio.propinaAsignada = propinaAsignada; 
+                    socio.puntosAsignadosFinales = puntosAsignadosFinales; 
 
                     const anticiposSocio = anticiposPorSocio[socio.ID] || [];
                     const totalAnticiposSocio = anticiposSocio.reduce((sum, ant) => sum + ant.cantidad, 0);
@@ -600,6 +683,7 @@
                 });
             };
 
+            // --- FUNCIONES DE CONEXIÓN A LA API (Google Sheets) ---
             async function apiCall(url, action, method = 'GET', body = null) {
                 if (!url) throw new Error(`URL para la acción '${action}' no configurada.`);
                 const fullUrl = (method === 'GET') ? `${url}?action=${action}` : url;
@@ -613,6 +697,16 @@
                 const result = await response.json();
                 if (result.status !== 'success') throw new Error(result.message);
                 return result.data;
+            }
+
+            async function fetchBalanceFinal() {
+                try {
+                    const data = await apiCall(SCRIPT_URL_SOCIOS, 'getUltimaDistribucion');
+                    ultimaDistribucionData = data;
+                } catch (error) {
+                    console.warn('No se pudo obtener la última distribución guardada:', error.message);
+                    ultimaDistribucionData = null; 
+                }
             }
 
             async function fetchAndProcessSocios() {
@@ -658,6 +752,7 @@
                 try {
                     await fetchMontos();
                     await fetchAndProcessSocios();
+                    await fetchBalanceFinal(); 
                     updateAllUI();
                 } catch (error) {
                     console.error("Error en la sincronización:", error);
@@ -673,7 +768,7 @@
                 const propinaNeta = parseNumber(ui.balancePropinaNeta.textContent);
                 const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
                 
-                const totalPuntosMatch = document.getElementById('totalPuntosDisplay').innerText.match(/Puntos Totales Distribuidos: ([\d\.]+)/);
+                const totalPuntosMatch = ui.totalPuntosDisplay.innerText.match(/Puntos Totales Distribuidos: ([\d\.]+)/);
                 const totalPuntos = totalPuntosMatch ? parseFloat(totalPuntosMatch[1]) : 0;
 
                 if (puntoPlanta <= 0) {
@@ -685,7 +780,6 @@
                 const distribucion = sociosData.map(socio => {
                     const anticiposSocio = (getAnticiposFromStorage()[socio.ID] || []).reduce((sum, a) => sum + a.cantidad, 0);
                     
-                    // Se usa puntosAsignadosFinales que es el valor correcto para el reporte (Tope para Planta, Antigüedad Base para PT)
                     const puntosFinales = socio.puntosAsignadosFinales;
                     const propinaAsignada = socio.propinaAsignada;
 
@@ -697,7 +791,7 @@
                         Area: socio.Area,
                         TipoContrato: socio.TipoContrato,
                         PuntosAntiguedad: socio.puntosAntiguedad,
-                        PuntosFinales: parseFloat(puntosFinales),
+                        PuntosFinales: parseFloat(puntosFinales.toFixed(2)),
                         PropinaAsignada: Math.round(propinaAsignada),
                         Anticipos: Math.round(anticiposSocio),
                         SaldoFinal: Math.round(saldoFinal)
@@ -722,12 +816,15 @@
                     
                     showToast(`Distribución guardada en Sheets. Hoja: ${result.sheetName}`, 'success');
                     
+                    // 3. Resincronizar
+                    await syncData(); 
+                    
                 } catch (error) {
                     console.error('Error al guardar la distribución:', error);
                     showToast(`Error al guardar: ${error.message}`, 'danger');
                 }
             }
-            // --- FIN DE LA NUEVA FUNCIÓN DE GUARDADO ---
+            // --- FIN DE LA FUNCIÓN DE GUARDADO ---
             
             function setupEventListeners() {
                 ui.menuToggle.addEventListener('click', (e) => { e.stopPropagation(); ui.sideMenu.classList.toggle('open'); ui.menuToggle.classList.toggle('active'); });
@@ -744,8 +841,17 @@
                 ui.registroSocioForm.addEventListener('submit', handleRegisterSocio);
                 document.querySelector('.show-punto-planta-btn').addEventListener('click', handleShowPuntoPlantaModal);
                 document.getElementById('addAnticipoBtn').addEventListener('click', handleShowAnticipoModal);
-                document.getElementById('saveDistribucionBtn').addEventListener('click', handleSaveDistribucionFinal); // AÑADIDO
+                document.getElementById('saveDistribucionBtn').addEventListener('click', handleSaveDistribucionFinal); 
                 document.getElementById('addDescuentoBtn').addEventListener('click', () => handleShowDescuentoModal());
+                
+                // CONEXIÓN DE LOS BOTONES DE CARGA DE DISTRIBUCIÓN
+                if (ui.cargarUltimaDistribucionBtn) {
+                    ui.cargarUltimaDistribucionBtn.addEventListener('click', handleLoadUltimaDistribucion); // Botón en Balance
+                }
+                if (ui.loadDistribucionBtn) {
+                     ui.loadDistribucionBtn.addEventListener('click', handleLoadUltimaDistribucion); // Botón en Distribución
+                }
+                
                 document.body.addEventListener('click', e => {
                     if (e.target.matches('.edit-btn')) handleShowEditSocioModal(e.target.dataset.socioId);
                     if (e.target.matches('.delete-btn')) handleDeleteSocio(e.target.dataset.socioId);
@@ -919,7 +1025,6 @@
                     const socioId = selectedOption.dataset.id;
                     modal.querySelector('#anticipoSocioId').value = socioId;
                     const socio = sociosData.find(s => s.ID === socioId);
-                    // Usar la propinaAsignada ya calculada por updateAllUI
                     const propinaAsignada = socio.propinaAsignada || 0; 
                     const anticiposAnteriores = (getAnticiposFromStorage()[socioId] || []).reduce((sum, a) => sum + a.cantidad, 0);
                     const saldo = propinaAsignada - anticiposAnteriores;
@@ -1082,12 +1187,12 @@
                 
                 selectedDaysCount.textContent = diasTrabajados.length;
                 
-                // --- CALENDARIO ACTUALIZADO CON FORMATO YYYY-MM-DD INTERNO ---
+                // Configuración de Flatpickr
                 flatpickrInstance = flatpickr(flatpickrInput, {
                     mode: "multiple", 
-                    dateFormat: "Y-m-d", // Formato interno para cálculos y almacenamiento
-                    altInput: true,      // Muestra un formato diferente al usuario
-                    altFormat: "d-m-Y",  // Formato que ve el usuario (DD-MM-YYYY)
+                    dateFormat: "Y-m-d", // Formato interno (YYYY-MM-DD)
+                    altInput: true,      
+                    altFormat: "d-m-Y",  // Formato visible (DD-MM-YYYY)
                     locale: "es", 
                     defaultDate: diasTrabajados,
                     onChange: (selectedDates) => {
@@ -1096,7 +1201,6 @@
                 });
 
                 saveBtn.onclick = () => {
-                    // Se asegura de guardar en formato YYYY-MM-DD para compatibilidad
                     const selectedDates = flatpickrInstance.selectedDates.map(d => flatpickrInstance.formatDate(d, "Y-m-d"));
                     allPtData[socioId] = { ...ptData, diasTrabajados: selectedDates };
                     savePartTimeDataToStorage(allPtData);
@@ -1120,7 +1224,6 @@
                 modal.querySelector('#partTimeModalAssignableAmount').textContent = `$${formatNumber(ptData.montoAsignable)}`;
                 modal.querySelector('#partTimeMultiplicador').value = ptData.multiplicador || 1;
                 
-                // Puntos Calculados PT: Monto Asignable / Divisor (Multiplicador)
                 const puntosCalculadosActual = ptData.montoAsignable > 0 && ptData.multiplicador > 0 
                     ? ptData.montoAsignable / ptData.multiplicador 
                     : 0;
@@ -1150,7 +1253,7 @@
             async function initializeApp() {
                 setupEventListeners();
                 await syncData();
-                setInterval(syncData, 60000);
+                setInterval(syncData, 60000); // Sincroniza cada 60 segundos
             }
 
             initializeApp();
