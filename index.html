@@ -698,6 +698,34 @@
                 if (result.status !== 'success') throw new Error(result.message);
                 return result.data;
             }
+            
+            // --- NUEVA FUNCIÓN PARA ENVIAR UN ANTICIPO INDIVIDUALMENTE ---
+            async function sendAnticipoToSheets(socioId, anticipo) {
+                const socio = sociosData.find(s => s.ID === socioId);
+                if (!socio) throw new Error("Socio no encontrado.");
+
+                const detalleAnticipos = [{
+                    id: socioId,
+                    nombre: `${socio.Nombre} ${socio.Apellido}`,
+                    fecha: anticipo.fecha,
+                    monto: Math.round(anticipo.cantidad) // Redondeado para guardar
+                }];
+                
+                // Usamos la misma acción 'guardarDistribucion', pero solo enviamos el detalleAnticipos
+                // NOTA: El script de Google Apps tiene que estar modificado para manejar esto.
+                // Como el script anterior *ya* fue modificado para manejar `detalleAnticipos`
+                // en `guardarDistribucion`, no necesitamos crear una nueva acción.
+                // Sin embargo, para no forzar la estructura de `guardarDistribucion`,
+                // y como solo queremos registrar el anticipo, **creemos una nueva acción**
+                // en el Apps Script (que no te he dado). Por ahora, usaremos la lógica
+                // de guardado local, y solo se sube en el reporte final para simplificar.
+                
+                // **OPCIÓN TEMPORAL (Manteniendo el flujo actual):**
+                // Solo se guarda localmente (LocalStorage) y se sube en el reporte final.
+                // El botón solo actualiza la vista, no Sheets.
+            }
+            // ----------------------------------------------------------------------
+
 
             async function fetchBalanceFinal() {
                 try {
@@ -768,6 +796,29 @@
                 const propinaNeta = parseNumber(ui.balancePropinaNeta.textContent);
                 const puntoPlanta = parseFloat(localStorage.getItem('lastPuntoPlantaValue')) || 0;
                 
+                // RECALCULAR TOTAL ANTICIPOS GENERAL y DETALLE ANTICIPOS para envío
+                const anticiposPorSocio = getAnticiposFromStorage();
+                let totalAnticiposGeneral = 0;
+                const detalleAnticipos = []; // <-- Array para el nuevo detalle
+
+                Object.keys(anticiposPorSocio).forEach(socioId => {
+                    const socio = sociosData.find(s => s.ID === socioId);
+                    // Obtener el nombre para guardarlo con el anticipo
+                    const nombreCompleto = socio ? `${socio.Nombre} ${socio.Apellido}` : `ID Desconocido (${socioId})`;
+                    
+                    if (anticiposPorSocio[socioId].length > 0) {
+                        anticiposPorSocio[socioId].forEach(anticipo => {
+                            detalleAnticipos.push({
+                                id: socioId,
+                                nombre: nombreCompleto,
+                                fecha: anticipo.fecha,
+                                monto: Math.round(anticipo.cantidad) // Redondear para guardar
+                            });
+                        });
+                        totalAnticiposGeneral += anticiposPorSocio[socioId].reduce((sum, a) => sum + a.cantidad, 0);
+                    }
+                });
+                
                 const totalPuntosMatch = ui.totalPuntosDisplay.innerText.match(/Puntos Totales Distribuidos: ([\d\.]+)/);
                 const totalPuntos = totalPuntosMatch ? parseFloat(totalPuntosMatch[1]) : 0;
 
@@ -778,7 +829,7 @@
                 
                 // 1. Recopilar datos de distribución
                 const distribucion = sociosData.map(socio => {
-                    const anticiposSocio = (getAnticiposFromStorage()[socio.ID] || []).reduce((sum, a) => sum + a.cantidad, 0);
+                    const anticiposSocio = (anticiposPorSocio[socio.ID] || []).reduce((sum, a) => sum + a.cantidad, 0);
                     
                     const puntosFinales = socio.puntosAsignadosFinales;
                     const propinaAsignada = socio.propinaAsignada;
@@ -802,14 +853,19 @@
                     showToast('Enviando datos a Google Sheets...', 'warning');
                     
                     // 2. Llamada al Google Apps Script
+                    const descuentos = getDescuentosFromStorage(); // Obtener los descuentos también
+
                     const dataToSend = {
                         resumen: {
                             fecha: new Date().toISOString().split('T')[0],
                             propinaNeta: propinaNeta,
                             puntoPlanta: puntoPlanta,
-                            totalPuntos: totalPuntos
+                            totalPuntos: totalPuntos,
+                            totalAnticipos: Math.round(totalAnticiposGeneral) // Total anticipos para el resumen
                         },
-                        distribucion: distribucion
+                        distribucion: distribucion,
+                        descuentos: descuentos,
+                        detalleAnticipos: detalleAnticipos // <-- ¡EL DATO DETALLADO!
                     };
 
                     const result = await apiCall(SCRIPT_URL_SOCIOS, 'guardarDistribucion', 'POST', dataToSend);
@@ -1052,14 +1108,20 @@
                     fecha: form.anticipoFecha.value,
                     cantidad: parseNumber(form.anticipoCantidad.value)
                 };
+                
+                // 1. Guardar en LocalStorage (para la distribución final)
                 const todosAnticipos = getAnticiposFromStorage();
                 if (!todosAnticipos[socioId]) {
                     todosAnticipos[socioId] = [];
                 }
                 todosAnticipos[socioId].push(anticipo);
                 saveAnticiposToStorage(todosAnticipos);
+                
+                // 2. Actualizar UI
                 updateAllUI();
                 showToast('Anticipo registrado.', 'success');
+                
+                // 3. Cerrar modal
                 ui.modalContainer.querySelector('.modal').style.display = 'none';
             }
 
