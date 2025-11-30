@@ -29,6 +29,13 @@
         .socio-distribucion-card .upload-anticipos-btn:hover {
             background-color: #e67e22; 
         }
+        /* NUEVO ESTILO PARA EL BOTÓN DE DESCARGA */
+        .socio-distribucion-card .download-anticipos-btn {
+            background-color: #3498db; /* Azul para descargar/cargar */
+        }
+        .socio-distribucion-card .download-anticipos-btn:hover {
+            background-color: #2980b9; 
+        }
         @media (min-width:992px){.menu-toggle{display:none}.side-menu{transform:translateX(0)}.main-container{margin-left:var(--menu-width)}.container h1{padding-top:0}}
     </style>
 </head>
@@ -45,6 +52,9 @@
             <h1>Gestión de Propina</h1>
             <div id="balanceContent" class="content-panel active">
                 <h2><span>Balance General</span><span id="sync-indicator"></span></h2>
+                <button type="button" id="syncDataBtn" style="background-color: #34495e; margin-bottom: 20px;">
+                    🔄 Sincronizar Datos y Cargar Socios (Sheets)
+                </button>
                 <div id="balanceReport">
                     <p><strong>Total Propina Bruta (de Sheets):</strong> <span id="balancePropinaBruta">$0</span></p>
                     <p><strong>(-) Descuentos Operacionales:</strong> <span id="balanceDescuentos">$0</span></p>
@@ -243,7 +253,7 @@
             // --- CONEXIONES CON GOOGLE SHEETS --- ¡¡¡IMPORTANTE!!!
             // ASEGÚRATE DE QUE ESTAS URLs SON CORRECTAS PARA TU PROYECTO.
             const SCRIPT_URL_MONTOS = 'https://script.google.com/macros/s/AKfycbxna9EH5LZPTPCPws58pGro6qCrZ8_zNwvUkUHS28BYfd8CsAcD1MRcqlITbDm4lTk/exec'; // Para Balance (Propina Bruta)
-            const SCRIPT_URL_SOCIOS = 'https://script.google.com/macros/s/AKfycbwoc3UKlGSTZ1AtNvo1BLq2lYNr0NYsMu30iy-AH4E_5V470FewJ9AuvPz47bMiyG2DaA/exec'; // Para Socios
+            const SCRIPT_URL_SOCIOS = 'https://script.google.com/macros/s/AKfycbzkBZOBEmoYfxV4BrFcLfnzCJBzGAW-B6bzNc70DrXLIibQtofJ9eRUkY99_xNXgLE9Fg/exec'; // Para Socios
             
             document.getElementById('registroSocioForm').innerHTML = document.getElementById('templateRegistroSocioForm').innerHTML;
             
@@ -254,6 +264,7 @@
                 toastContainer: document.getElementById('toast-container'),
                 modalContainer: document.getElementById('modal-container'),
                 syncIndicator: document.getElementById('sync-indicator'),
+                syncDataBtn: document.getElementById('syncDataBtn'), 
                 balancePropinaBruta: document.getElementById('balancePropinaBruta'),
                 balanceDescuentos: document.getElementById('balanceDescuentos'),
                 balancePropinaNeta: document.getElementById('balancePropinaNeta'),
@@ -601,7 +612,7 @@
                 return card;
             };
 
-            // MODIFICACIÓN CLAVE: Añadir los botones de carga/subida.
+            // MODIFICACIÓN CLAVE: Añadir el botón de DESCARGA (Cargar Anticipos Sheets).
             const createSocioDistribucionCard = (socio) => {
                 const card = document.createElement('div');
                 card.className = 'socio-distribucion-card';
@@ -653,8 +664,9 @@
                                   <p><strong>Saldo Disponible:</strong> <span class="saldo-disponible">$0</span></p>
                                   ${anticiposHtml}
                                   <div class="individual-actions">
+                                      <button class="download-anticipos-btn" data-socio-id="${socio.ID}">📥 Cargar Anticipos (Sheets)</button>
                                       <button class="upload-anticipos-btn" data-socio-id="${socio.ID}">Subir Anticipos a Sheets</button>
-                                  </div>`; // El botón "Cargar Info" ya se cumple con la carga inicial.
+                                  </div>`; 
                 return card;
             };
 
@@ -706,6 +718,32 @@
                     const saldo = propinaAsignada - totalAnticiposSocio;
                     saldoEl.textContent = `$${formatNumber(saldo)}`;
                     saldoEl.classList.toggle('negative', saldo < 0);
+
+                    // Refrescar la lista de anticipos locales
+                    let anticiposHtml = '';
+                    if (anticiposSocio.length > 0) {
+                        anticiposHtml = `<div class="anticipos-list-container"><h4>Anticipos Registrados (Local)</h4>
+                            ${anticiposSocio.map((a, index) => `
+                                <div class="anticipo-item">
+                                    <div class="anticipo-item-info">
+                                        <span class="monto">$${formatNumber(a.cantidad)}</span>
+                                        <span>${formatDisplayDate(a.fecha)}</span>
+                                    </div>
+                                    <div class="anticipo-item-actions">
+                                        <button class="edit-anticipo-btn" data-socio-id="${socio.ID}" data-anticipo-index="${index}">✏️</button>
+                                        <button class="delete-anticipo-btn" data-socio-id="${socio.ID}" data-anticipo-index="${index}">🗑️</button>
+                                    </div>
+                                </div>`).join('')}
+                        </div>`;
+                    }
+                    
+                    // Reemplazar la lista de anticipos
+                    let existingAnticiposContainer = card.querySelector('.anticipos-list-container');
+                    if(existingAnticiposContainer) {
+                        existingAnticiposContainer.outerHTML = anticiposHtml || '';
+                    } else if (anticiposHtml) {
+                        card.querySelector('.individual-actions').insertAdjacentHTML('beforebegin', anticiposHtml);
+                    }
                 });
             };
 
@@ -725,7 +763,55 @@
                 return result.data;
             }
             
-            // --- NUEVA FUNCIÓN PARA ENVIAR ANTICIPOS INDIVIDUALMENTE ---
+            // --- NUEVA FUNCIÓN PARA DESCARGAR ANTICIPOS INDIVIDUALES ---
+            async function handleDownloadAnticipos(socioId) {
+                const socio = sociosData.find(s => s.ID === socioId);
+                if (!socio) {
+                    showToast("Error: Socio no encontrado.", 'danger');
+                    return;
+                }
+
+                try {
+                    showToast(`Descargando anticipos de ${socio.Nombre} desde Sheets...`, 'warning');
+
+                    // Llama a la nueva función de Google Apps Script
+                    const anticiposSheets = await apiCall(
+                        SCRIPT_URL_SOCIOS, 
+                        'getAnticiposSocioDesdeSheets', 
+                        'POST', 
+                        { socioId: socio.ID }
+                    );
+
+                    if (anticiposSheets.length === 0) {
+                        showToast(`No se encontraron anticipos individuales pendientes de distribución para ${socio.Nombre} en Sheets.`, 'warning');
+                        
+                        // Si no hay, limpia el local storage de anticipos individuales
+                        let todosAnticipos = getAnticiposFromStorage();
+                        delete todosAnticipos[socioId];
+                        saveAnticiposToStorage(todosAnticipos);
+                        updateAllUI();
+                        return;
+                    }
+
+                    // 1. Sobreescribir el LocalStorage con los datos de Sheets
+                    let todosAnticipos = getAnticiposFromStorage();
+                    todosAnticipos[socioId] = anticiposSheets;
+                    saveAnticiposToStorage(todosAnticipos);
+                    
+                    // 2. Actualizar la interfaz
+                    updateAllUI();
+                    
+                    showToast(`Se cargaron ${anticiposSheets.length} anticipos para ${socio.Nombre}.`, 'success');
+
+                } catch (error) {
+                    console.error('Error al descargar anticipos individuales:', error);
+                    showToast(`Error al descargar anticipos: ${error.message}`, 'danger');
+                }
+            }
+            // ----------------------------------------------------------------------
+
+
+            // --- FUNCIÓN PARA ENVIAR ANTICIPOS INDIVIDUALMENTE ---
             async function handleUploadAnticipos(socioId) {
                 const socio = sociosData.find(s => s.ID === socioId);
                 const anticipos = getAnticiposFromStorage()[socioId] || [];
@@ -745,15 +831,10 @@
                     const dataToSend = {
                         socioId: socio.ID,
                         nombreCompleto: `${socio.Nombre} ${socio.Apellido}`,
-                        anticipos: anticipos // Enviamos todos los anticipos registrados localmente
+                        anticipos: anticipos 
                     };
                     
-                    // Llamada a la nueva acción en Apps Script
                     const result = await apiCall(SCRIPT_URL_SOCIOS, 'registrarAnticiposSocio', 'POST', dataToSend);
-                    
-                    // Opcional: Si los anticipos se suben, puedes borrarlos del LocalStorage para evitar resubirlos
-                    // Esto depende de si quieres mantener el LocalStorage como registro temporal.
-                    // Para este ejemplo, **NO** los borraremos, solo mostramos que se subieron.
                     
                     showToast(result.message, 'success');
 
@@ -820,12 +901,14 @@
                     await fetchAndProcessSocios();
                     await fetchBalanceFinal(); 
                     updateAllUI();
+                    showToast('Datos actualizados desde Google Sheets.', 'success');
                 } catch (error) {
                     console.error("Error en la sincronización:", error);
                     showToast(`Error de sincronización: ${error.message}`, 'danger');
                 } finally {
                     isSyncing = false;
                     ui.syncIndicator.classList.remove('visible');
+                    ui.syncIndicator.textContent = '';
                 }
             }
             
@@ -910,7 +993,8 @@
                     
                     showToast(`Distribución guardada en Sheets. Hoja: ${result.sheetName}`, 'success');
                     
-                    // 3. Resincronizar
+                    // 3. Resincronizar y limpiar LocalStorage (ya que los anticipos pasan a ser "Distribución Final")
+                    localStorage.removeItem('anticipos_data_v3');
                     await syncData(); 
                     
                 } catch (error) {
@@ -938,6 +1022,9 @@
                 document.getElementById('saveDistribucionBtn').addEventListener('click', handleSaveDistribucionFinal); 
                 document.getElementById('addDescuentoBtn').addEventListener('click', () => handleShowDescuentoModal());
                 
+                // CONEXIÓN DEL BOTÓN DE SINCRONIZACIÓN MANUAL
+                ui.syncDataBtn.addEventListener('click', syncData);
+
                 // CONEXIÓN DE LOS BOTONES DE CARGA DE DISTRIBUCIÓN
                 if (ui.cargarUltimaDistribucionBtn) {
                     ui.cargarUltimaDistribucionBtn.addEventListener('click', handleLoadUltimaDistribucion);
@@ -951,12 +1038,14 @@
                     if (e.target.matches('.delete-btn')) handleDeleteSocio(e.target.dataset.socioId);
                     if (e.target.matches('.edit-anticipo-btn')) handleShowEditAnticipoModal(e.target.dataset.socioId, parseInt(e.target.dataset.anticipoIndex));
                     if (e.target.matches('.delete-anticipo-btn')) handleDeleteAnticipo(e.target.dataset.socioId, parseInt(e.target.dataset.anticipoIndex));
-                    if (e.target.matches('.calendar-btn')) abrirCalendarModal(e.target.dataset.socio-id);
+                    if (e.target.matches('.calendar-btn')) abrirCalendarModal(e.target.dataset.socioId);
                     if (e.target.matches('.calculate-btn')) abrirPartTimePointsModal(e.target.dataset.socioId);
                     if (e.target.matches('.edit-descuento-btn')) handleShowDescuentoModal(e.target.dataset.id);
                     if (e.target.matches('.delete-descuento-btn')) handleDeleteDescuento(e.target.dataset.id);
-                    // NUEVO EVENTO PARA EL BOTÓN DE SUBIDA INDIVIDUAL
+                    // EVENTO PARA EL BOTÓN DE SUBIDA INDIVIDUAL
                     if (e.target.matches('.upload-anticipos-btn')) handleUploadAnticipos(e.target.dataset.socioId); 
+                    // EVENTO PARA EL BOTÓN DE DESCARGA INDIVIDUAL
+                    if (e.target.matches('.download-anticipos-btn')) handleDownloadAnticipos(e.target.dataset.socioId); 
                 });
             }
 
@@ -1355,7 +1444,7 @@
             async function initializeApp() {
                 setupEventListeners();
                 await syncData();
-                setInterval(syncData, 60000); // Sincroniza cada 60 segundos
+                setInterval(syncData, 60000); // Sincroniza automáticamente cada 60 segundos
             }
 
             initializeApp();
